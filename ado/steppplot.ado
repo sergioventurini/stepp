@@ -105,7 +105,7 @@ program _steppplot
 		tempname subpop_plot
 		local xtitle "Subpopulations by median covariate"
 		twoway `allname' ||, ylabel(`ylabs', angle(0) labsize(small)) ///
-			xlabel(`xlabs', labsize(small)) ///
+			xlabel(`xlabs', labsize(small) angle(90)) ///
 			text(`xannot', size(small) placement(north) justification(center) ///
 			alignment(top) margin(small)) xtitle(`xtitle', margin(medsmall)) ///
 			legend(off) scheme(sj) name(`subpop_plot', replace)
@@ -421,10 +421,9 @@ program _steppplot
 			}
 		}
 		local xtitle "Subpopulations by median covariate"
-		mata: st_numscalar("`maxHR'", round(max(`HRU_tmp'), .01))
-		local yrange = "0(.5)" + strofreal(`maxHR')   // not used so far
+		mata: st_local("yrange", invtokens(strofreal(pretty((0 \ vec(`HRU_tmp')), 7))'))
 		if ("`popsize'" != "") local xannot ""
-		twoway scatter `allnames' `xvalues', ylabel(#8) xlabel(`xlabs') ///
+		twoway scatter `allnames' `xvalues', ylabel(`yrange') xlabel(`xlabs') ///
 			ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
 			connect(`allconnect') legend(`alllabels' order(`allorder')) ///
 			lpattern(`allpattern') lwidth(`allwidth') lcolor(`allcolor') ///
