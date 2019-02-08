@@ -29,8 +29,10 @@ program _steppplot
 	syntax [ , Subpop Trteff Diff Ratio All Conf(numlist >0 <1 min=1 max=1) ///
 		Pointwise noPOPsize ]
 	
-	local 0 `", `options'"'
+	gettoken subcmd rest : 0 , parse(", ")
 
+	local 0 `", `options'"'
+	
 	tempvar __touse__
 	quietly generate `__touse__' = e(sample)
 	
@@ -42,19 +44,19 @@ program _steppplot
 	local isnotest : list notest in props
 	local dq `"""'
 	
-	if ("`conf'" != "") {
-		tempname alpha zcrit
-		mata: `alpha' = 1 - strtoreal(st_local("conf"))
-		if ("`pointwise'" != "") {
-			mata: st_numscalar("`zcrit'", invnormal(1 - `alpha'/2))
-		}
-		else {
-			mata: st_numscalar("`zcrit'", ///
-				invnormal(1 - `alpha'/(2*st_numscalar("e(nsubpop)"))))
-		}
+	if ("`conf'" == "") local conf = 0.95
+	
+	tempname alpha zcrit
+	mata: `alpha' = 1 - strtoreal(st_local("conf"))
+	if ("`pointwise'" != "") {
+		mata: st_numscalar("`zcrit'", invnormal(1 - `alpha'/2))
+	}
+	else {
+		mata: st_numscalar("`zcrit'", ///
+			invnormal(1 - `alpha'/(2*st_numscalar("e(nsubpop)"))))
 	}
 	
-	if ("`all'" != "") {
+	if (("`all'" != "") | ("`rest'" == "")) {
 		local subpop "subpop"
 		local trteff "trteff"
 		local diff "diff"
@@ -135,10 +137,11 @@ program _steppplot
 		preserve
 
 		quietly drop _all
+		tempname xvalues
 		mata: st_addobs(`nsubpop')
-		mata: (void) st_addvar("double", xvalues = st_tempname())
-		mata: st_store(., xvalues, st_matrix("`medians'"))
-		mata: st_local("xvalues", xvalues)
+		mata: (void) st_addvar("double", `xvalues' = st_tempname())
+		mata: st_store(., `xvalues', st_matrix("`medians'"))
+		mata: st_local("xvalues", `xvalues')
 		
 		tempname skmObs
 		matrix `skmObs' = J(`nsubpop', `ntrts', .)
@@ -211,10 +214,11 @@ program _steppplot
 		preserve
 
 		quietly drop _all
+		tempname xvalues
 		mata: st_addobs(`nsubpop')
-		mata: (void) st_addvar("double", xvalues = st_tempname())
-		mata: st_store(., xvalues, st_matrix("`medians'"))
-		mata: st_local("xvalues", xvalues)
+		mata: (void) st_addvar("double", `xvalues' = st_tempname())
+		mata: st_store(., `xvalues', st_matrix("`medians'"))
+		mata: st_local("xvalues", `xvalues')
 		
 		tempname skmObs skmObsV dskmObs dskmObsSE dskmObsSE_tmp ///
 			dskmObsL dskmObsU dskmObsL_tmp dskmObsU_tmp
@@ -327,10 +331,11 @@ program _steppplot
 		preserve
 
 		quietly drop _all
+		tempname xvalues
 		mata: st_addobs(`nsubpop')
-		mata: (void) st_addvar("double", xvalues = st_tempname())
-		mata: st_store(., xvalues, st_matrix("`medians'"))
-		mata: st_local("xvalues", xvalues)
+		mata: (void) st_addvar("double", `xvalues' = st_tempname())
+		mata: st_store(., `xvalues', st_matrix("`medians'"))
+		mata: st_local("xvalues", `xvalues')
 		
 		tempname logHR logHR_tmp logHRSE logHRSE_tmp HR HRL HRU HRL_tmp HRU_tmp
 		matrix `logHR' = J(`nsubpop', `ntrts' - 1, .)
@@ -435,4 +440,11 @@ program _steppplot
 		
 		restore
 	}
+	
+	/* Clean up */
+	if ("`cleanup'" == "") {
+		capture mata: cleanup()   // all objectes are deleted apart from __steppes__
+		mata: st_rclear()
+	}
+	/* End of cleaning up */
 end

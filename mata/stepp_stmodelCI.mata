@@ -187,7 +187,7 @@ struct steppes_result scalar stmodelCI_class::test(
 	class stwin_class scalar win
 	real scalar nsubpop, timePoint, ntrts, j, no, p, terminate, Ntemp,
 		skip, i, overallsCI1, overallsCI2, index, overallSlogHR, s, rm,
-		n_el
+		n_el, add_perm
 	real vector coltrt, survTime, trts, type, txassign, sel_ind, IndexSet1,
 		IndexSet2, sel, sCI1, sCI2, sCISE1, sCISE2, slogHRs, slogHRSE, sObs, oObs,
 		logHR, ologHR
@@ -237,6 +237,7 @@ struct steppes_result scalar stmodelCI_class::test(
 			no = 0
 			p = 0
 			terminate = 0
+			add_perm = 0
 			Ntemp = rows(osubpop)
 			IndexSet1 = selectindex(txassign :== 1)
 			IndexSet2 = selectindex(txassign :== 0)
@@ -256,25 +257,30 @@ struct steppes_result scalar stmodelCI_class::test(
 			skip = 0
 			while (no < nperm) {
 				if (showstatus) {
-					if (mod(no + 1, 50) == 0) {
-						todisp = strtrim(strofreal(no + 1, "%9.0f"))
-						if (strlen(todisp) < strlen(strofreal(nperm))) {
-							skip = strlen(strofreal(nperm)) - strlen(todisp)
+					if (!add_perm) {
+						if (mod(no + 1, 50) == 0) {
+							todisp = strtrim(strofreal(no + 1, "%9.0f"))
+							if (strlen(todisp) < strlen(strofreal(nperm))) {
+								skip = strlen(strofreal(nperm)) - strlen(todisp)
+							}
+							spaces = ""
+							for (i = 1; i <= (skip + 3); i++) {
+								spaces = spaces + char(32)
+							}
+							printf("{txt}." + spaces + todisp + "\n")
+							skip = 0
 						}
-						spaces = ""
-						for (i = 1; i <= (skip + 3); i++) {
-							spaces = spaces + char(32)
+						else if (no + 1 == nperm) {
+							printf("{txt}.\n")
 						}
-						printf("{txt}." + spaces + todisp + "\n")
-						skip = 0
-					}
-					else if (no + 1 == nperm) {
-						printf("{txt}.\n")
+						else {
+							printf("{txt}.")
+						}
+						displayflush()
 					}
 					else {
-						printf("{txt}.")
+						add_perm = 0
 					}
-					displayflush()
 				}
 				
 				sel = selectindex((txassign :== 1) :| (txassign :== 0))
@@ -296,12 +302,19 @@ struct steppes_result scalar stmodelCI_class::test(
 				for (i = 1; i <= nsubpop; i++) {
 					sel_ind = selectindex((subpop[., i] :== 1) :& (txassign :!= -1))
 					result = cuminc_HR(survTime[sel_ind], type[sel_ind], txassign[sel_ind])
-					
+					if (!any(result.keys() :== "1 1")) {
+						add_perm = 1
+						goto l10
+					}
 					temp_result = result.get("1 1")
 					if (max(temp_result.get("time")) >= timePoint) {
 						index = sum(temp_result.get("time") :<= timePoint)
 						sCI1[i] = temp_result.get("est")[index]
 						sCISE1[i] = sqrt(temp_result.get("var")[index])
+					}
+					if (!any(result.keys() :== "0 1")) {
+						add_perm = 1
+						goto l10
 					}
 					temp_result = result.get("0 1")
 					if (max(temp_result.get("time")) >= timePoint) {
@@ -335,7 +348,7 @@ struct steppes_result scalar stmodelCI_class::test(
 						logHRs[p, s] = slogHRs[s] - overallSlogHR
 					}
 				}
-				terminate++
+l10:		terminate++
 				if (terminate >= nperm + 10000) {
 					printf("{err}After permuting %f plus 10000 times, ", nperm)
 					printf("{err}the program was unable to generate the permutation ")
@@ -546,7 +559,8 @@ void print_cov_CI(class steppes_class scalar stobj, real scalar timePoint,
 	nsubpop = stobj.subpop->nsubpop
 	names = J(nsubpop, 1, "")
 	for (j = 1; j <= nsubpop; j++) {
-		names[j] = "SP" + strofreal(j) + "-Overall"
+// 		names[j] = "SP" + strofreal(j) + "-Overall"
+		names[j] = "SP" + strofreal(j)
 	}
 
 	longest = min((max(strlen(names)), 11))
@@ -561,12 +575,22 @@ void print_cov_CI(class steppes_class scalar stobj, real scalar timePoint,
 			printf("{res}%f {txt}subpopulations is:\n", ns)
 			printf("{txt}trt %f vs. trt %f\n", trts[j + 1], trts[1])
 			t = temp_t.get(j)
-			print_matrix(t.get("sigma"), names, names, "", ., longest)
+			st_matrix("__tmp_matrix__", t.get("sigma"))
+			st_matrixrowstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
+			st_matrixcolstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
+			stata("disp_corr, matrix(__tmp_matrix__)", 0)
+			stata("matrix drop __tmp_matrix__", 1)
+// 			print_matrix(t.get("sigma"), names, names, "", ., longest)
 
 			printf("\n")
 			printf("{txt}The covariance matrix of the log hazard ratios for the ")
 			printf("{res}%f {txt}subpopulations is:\n", ns)
-			print_matrix(t.get("HRsigma"), names, names, "", ., longest)
+			st_matrix("__tmp_matrix__", t.get("HRsigma"))
+			st_matrixrowstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
+			st_matrixcolstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
+			stata("disp_corr, matrix(__tmp_matrix__)", 0)
+			stata("matrix drop __tmp_matrix__", 1)
+// 			print_matrix(t.get("HRsigma"), names, names, "", ., longest)
 		}
 	}
 }

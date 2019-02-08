@@ -817,3 +817,21 @@ stepp ADorLE trtA, covsubpop(AGE) type(glm) patspop(100) ///
 */
 
 steppplot, all conf(0.95) //nopop
+
+/* Example 9 */
+/* --------- */
+use ./data/bigKM, clear
+
+stepp time trt, covsubpop(ki67) failure(event) type(km) patspop(150) ///
+	minpatspop(50) trts(1 2) timepoint(4.0) nperm(250) //notest
+
+steppplot, all conf(0.95) //nopop
+
+/* Example 10 */
+/* ---------- */
+use ./data/bigCI, clear
+
+stepp time trt, covsubpop(ki67) comprisk(event) type(ci) patspop(150) ///
+	minpatspop(50) trts(1 2) timepoint(4.0) nperm(25) //notest
+
+steppplot, all conf(0.95) //nopop

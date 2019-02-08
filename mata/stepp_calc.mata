@@ -130,10 +130,13 @@ class AssociativeArray scalar cuminc_HR(real vector ftime, real vector fstatus,
 	if (ng > 1) {
 		stat_res.put("uclab", uclab)
 		stat_res.put("stat", stat)
+		if (stat == J(nc, 1, 0)) {
+			printf("\n")
+			_error("something went wrong in the calculations; try rerunning the analysis")
+		}
 		stat_res.put("pv", 1 :- chi2(ng - 1, stat))
 		stat_res.put("df", J(length(stat), 1, ng - 1))
 		pf.put("Tests", stat_res)
-		
 		pf.put("ome", ome)
 		pf.put("omevar", omevar)
 	}

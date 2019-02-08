@@ -343,8 +343,8 @@ real scalar ppv(real matrix imatrix, real matrix sigmainv, real vector estarray,
 	return(pvalue)
 }
 
-real scalar ppv2(real matrix imatrix, real vector estarray,
-	real vector est, real scalar noPerms)
+real scalar ppv2(real matrix imatrix, real vector estarray, real vector est,
+	real scalar noPerms)
 {
 	/* Description:
 		 ------------
@@ -978,6 +978,7 @@ void cleanup()
 	names = direxternal("__*")
 
 	for (i = 1; i <= rows(names); i++) {
+		// delete all objectes apart from __steppes__
 		if (names[i] != "__steppes__") rmexternal(names[i])
 	}
 }

@@ -1008,7 +1008,8 @@ void print_cov_GLM(class steppes_class scalar stobj, real vector trts)
 	nsubpop = stobj.subpop->nsubpop
 	names = J(nsubpop, 1, "")
 	for (j = 1; j <= nsubpop; j++) {
-		names[j] = "SP" + strofreal(j) + "-Overall"
+// 		names[j] = "SP" + strofreal(j) + "-Overall"
+		names[j] = "SP" + strofreal(j)
 	}
 
 	longest = min((max(strlen(names)), 11))
@@ -1023,12 +1024,22 @@ void print_cov_GLM(class steppes_class scalar stobj, real vector trts)
 			printf("{txt}subpopulations is:\n")
 			printf("{txt}trt %f vs. trt %f\n", trts[j + 1], trts[1])
 			t = temp_t.get(j)
-			print_matrix(t.get("sigma"), names, names, "", ., longest)
+			st_matrix("__tmp_matrix__", t.get("sigma"))
+			st_matrixrowstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
+			st_matrixcolstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
+			stata("disp_corr, matrix(__tmp_matrix__)", 0)
+			stata("matrix drop __tmp_matrix__", 1)
+// 			print_matrix(t.get("sigma"), names, names, "", ., longest)
 
 			printf("\n")
 			printf("{txt}The covariance matrix of the log effect ratios for the ")
 			printf("{res}%f {txt}subpopulations is:\n", ns)
-			print_matrix(t.get("HRsigma"), names, names, "", ., longest)
+			st_matrix("__tmp_matrix__", t.get("HRsigma"))
+			st_matrixrowstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
+			st_matrixcolstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
+			stata("disp_corr, matrix(__tmp_matrix__)", 0)
+			stata("matrix drop __tmp_matrix__", 1)
+// 			print_matrix(t.get("HRsigma"), names, names, "", ., longest)
 		}
 	}
 }
