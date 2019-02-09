@@ -27,7 +27,8 @@ end
 
 program _steppplot
 	syntax [ , Subpop Trteff Diff Ratio All Conf(numlist >0 <1 min=1 max=1) ///
-		Pointwise noPOPsize ]
+		Pointwise noPOPsize TRTlabs(string asis) Xtitle(string ) ///
+		Ytitle(string )]
 	
 	gettoken subcmd rest : 0 , parse(", ")
 
@@ -56,16 +57,29 @@ program _steppplot
 			invnormal(1 - `alpha'/(2*st_numscalar("e(nsubpop)"))))
 	}
 	
-	if (("`all'" != "") | ("`rest'" == "")) {
+	if (("`all'" != "") | (`"`rest'"' == "")) {
 		local subpop "subpop"
 		local trteff "trteff"
 		local diff "diff"
 		local ratio "ratio"
 	}
 	
+	local ntrts = e(ntrts)
+	local nsubpop = e(nsubpop)
 	local type = e(type)
 	local family = e(family)
 	local link = e(link)
+	
+	tempname alltrtlabs
+	if ("`trtlabs'" != "") {
+		label define `alltrtlabs' `trtlabs'
+	}
+	else {
+		forvalues j = 1/`ntrts' {
+			local tmptrtlabs "`tmptrtlabs' `j' "Treatment `j'""
+		}
+		label define `alltrtlabs' `tmptrtlabs'
+	}
 	
 	if ("`subpop'" != "") {
 		tempname allvals nsubpop medians trts npatsub
@@ -105,7 +119,9 @@ program _steppplot
 		local allname "`allname' scatter value1 value2, msymbol(O) mcolor(gs0) mfcolor(gs0) mlcolor(gs0)"
 		
 		tempname subpop_plot
-		local xtitle "Subpopulations by median covariate"
+		if (`"`xtitle'"' == "") {
+			local xtitle "Subpopulations by median covariate"
+		}
 		twoway `allname' ||, ylabel(`ylabs', angle(0) labsize(small)) ///
 			xlabel(`xlabs', labsize(small) angle(90)) ///
 			text(`xannot', size(small) placement(north) justification(center) ///
@@ -151,7 +167,11 @@ program _steppplot
 			local allnames "`allnames' skmObs`j'"
 			local allconnect "`allconnect' l"
 			local trtj = `trts'[1, `j']
-			local legend "`legend' label(`j' Treatment `trtj')"
+			local trtlabj : label `alltrtlabs' `j', strict
+			if ("`trtlabj'" == "") {
+				local trtlabj "Treatment `trtj'"
+			}
+			local legend `"`legend' label(`j' `trtlabj')"'
 			local lwidth "`lwidth' medthick"
 			if ((!`isnotest') & (`j' > 1)) {
 				local jm1 = `j' - 1
@@ -177,8 +197,12 @@ program _steppplot
 		}
 		
 		tempname trteff_plot
-		local ytitle "Treatment effect estimates"
-		local xtitle "Subpopulations by median covariate"
+		if (`"`ytitle'"' == "") {
+			local ytitle "Treatment effect estimates"
+		}
+		if (`"`xtitle'"' == "") {
+			local xtitle "Subpopulations by median covariate"
+		}
 		if ("`popsize'" != "") local xannot ""
 		twoway scatter `allnames' `xvalues', ylabel(0(20)100) xlabel(`xlabs') ///
 			ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
@@ -232,10 +256,18 @@ program _steppplot
 		mata: `dskmObsL_tmp' = J(`nsubpop', `ntrts' - 1, .)
 		mata: `dskmObsU_tmp' = J(`nsubpop', `ntrts' - 1, .)
 		local trt1 = `trts'[1, 1]
+		local trt1lab : label `alltrtlabs' 1, strict
+		if ("`trt1lab'" == "") {
+			local trt1lab "Treatment `trt1'"
+		}
 		forvalues j = 1/`ntrts' {
 			matrix `skmObs'[1, `j'] = e(sObs_`j')*100
 			mata: `skmObsV'[., `j'] = (st_matrix("e(sSE_`j')")*100):^2
 			local trtj = `trts'[1, `j']
+			local trtjlab : label `alltrtlabs' `j', strict
+			if ("`trtjlab'" == "") {
+				local trtjlab "Treatment `trtj'"
+			}
 			if (`j' > 1) {
 				matrix `dskmObs'[1, `j' - 1] = `skmObs'[1..., 1] - `skmObs'[1..., `j']
 				mata: `dskmObsSE_tmp'[., `j' - 1] = sqrt(`skmObsV'[., 1] + `skmObsV'[., `j'])
@@ -258,7 +290,7 @@ program _steppplot
 				local j1 = 1 + 3*(`jm1' - 1)
 				local j2 = 2 + 3*(`jm1' - 1)
 				local j3 = 3 + 3*(`jm1' - 1)
-				local alllabels `"`alllabels' label(`j1' Treatment `trtj' vs. `trt1') label(`j2' `dq'`dq') label(`j3' `dq'`dq')"'
+				local alllabels `"`alllabels' label(`j1' `trtjlab' vs. `trt1lab') label(`j2' `dq'`dq') label(`j3' `dq'`dq')"'
 				local allorder "`allorder' `j1'"
 			}
 			if ((!`isnotest') & (`j' > 1)) {
@@ -293,8 +325,15 @@ program _steppplot
 		}
 		
 		tempname diff_plot
-		local ytitle "Treatment effect estimate differences"
-		local xtitle "Subpopulations by median covariate"
+		if (`"`ytitle'"' == "") {
+			local ytitle "Difference in treatment effect estimates"
+		}
+		else {
+			local ytitle "Difference in `ytitle'"
+		}
+		if (`"`xtitle'"' == "") {
+			local xtitle "Subpopulations by median covariate"
+		}
 		if ("`popsize'" != "") local xannot ""
 		twoway scatter `allnames' `xvalues', ylabel(-100(20)100) xlabel(`xlabs') ///
 			ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
@@ -348,10 +387,19 @@ program _steppplot
 		mata: `HRU_tmp' = J(`nsubpop', `ntrts' - 1, .)
 		local ntrtsm1 = `ntrts' - 1
 		local trt1 = `trts'[1, 1]
+		local trt1lab : label `alltrtlabs' 1, strict
+		if ("`trt1lab'" == "") {
+			local trt1lab "Treatment `trt1'"
+		}
 		forvalues j = 1/`ntrtsm1' {
 			mata: `logHR_tmp'[., `j'] = st_matrix("e(logHR_`j')")
 			mata: `logHRSE_tmp'[., `j'] = st_matrix("e(logHRSE_`j')")
+			local jp1 = `j' + 1
 			local trtj = `trts'[1, `j' + 1]
+			local trtjlab : label `alltrtlabs' `jp1', strict
+			if ("`trtjlab'" == "") {
+				local trtjlab "Treatment `trtj'"
+			}
 			mata: `HRL_tmp'[., `j'] = exp(`logHR_tmp'[., `j'] - ///
 				st_numscalar("`zcrit'")*`logHRSE_tmp'[., `j'])
 			mata: `HRU_tmp'[., `j'] = exp(`logHR_tmp'[., `j'] + ///
@@ -370,9 +418,8 @@ program _steppplot
 			local j1 = 1 + 3*(`j' - 1)
 			local j2 = 2 + 3*(`j' - 1)
 			local j3 = 3 + 3*(`j' - 1)
-			local alllabels `"`alllabels' label(`j1' Treatment `trtj' vs. `trt1') label(`j2' `dq'`dq') label(`j3' `dq'`dq')"'
+			local alllabels `"`alllabels' label(`j1' `trtjlab' vs. `trt1lab') label(`j2' `dq'`dq') label(`j3' `dq'`dq')"'
 			local allorder "`allorder' `j1'"
-			local jp1 = `j' + 1
 			if (!`isnotest') {
 				local pvalue = e(pvalue_`j')
 				if (`pvalue' > 0) {
@@ -425,7 +472,9 @@ program _steppplot
 				local ytitle "Risk ratios"
 			}
 		}
-		local xtitle "Subpopulations by median covariate"
+		if (`"`xtitle'"' == "") {
+			local xtitle "Subpopulations by median covariate"
+		}
 		mata: st_local("yrange", invtokens(strofreal(pretty((0 \ vec(`HRU_tmp')), 7))'))
 		if ("`popsize'" != "") local xannot ""
 		twoway scatter `allnames' `xvalues', ylabel(`yrange') xlabel(`xlabs') ///
