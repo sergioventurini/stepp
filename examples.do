@@ -824,9 +824,9 @@ steppplot, all conf(0.95) trtlabs(1 "Placebo" 2 "81 mg aspirin") ///
 use ./data/bigKM, clear
 
 stepp time trt, covsubpop(ki67) failure(event) type(km) patspop(150) ///
-	minpatspop(50) trts(1 2) timepoint(4.0) nperm(250) //notest
+	minpatspop(50) trts(1 2) timepoint(4.0) nperm(25) //notest
 
-steppplot, all conf(0.95) trtlabs(1 Taxmoxifen 2 Letrozole)
+steppplot, all conf(0.95) trtlabs(1 Taxmoxifen 2 Letrozole) ///
 	xtitle("Median Ki-67 LI in subpopulation (% immunoreactivity)") ///
 	ytitle("4-year disease free survival") //nopop
 
