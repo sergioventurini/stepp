@@ -233,7 +233,7 @@ seed number to use for making the permutation test results reproducible.
 {phang2}{cmd:. sysuse bigKM, clear}{p_end}
 
 {pstd}Model estimation{p_end}
-{phang2}{cmd:. stepp (stepp time trt, covsubpop(ki67) failure(event) type(km) patspop(150) minpatspop(50) trts(1 2) nperm(250)}{p_end}
+{phang2}{cmd:. stepp time trt, covsubpop(ki67) failure(event) type(km) patspop(150) minpatspop(50) trts(1 2) timepoint(4.0) nperm(250)}{p_end}
 
 {pstd}Graphical analysis{p_end}
 {phang2}{cmd:. steppplot, all conf(0.95) trtlabs(1 Taxmoxifen 2 Letrozole) xtitle("Median Ki-67 LI in subpopulation (% immunoreactivity)") ytitle("4-year disease free survival") nopop}{p_end}
