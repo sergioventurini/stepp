@@ -1,5 +1,5 @@
 *!stepp_cmprsk version 0.1.0
-*!Written 08Feb2019
+*!Written 11Feb2019
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 

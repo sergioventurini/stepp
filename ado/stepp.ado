@@ -1,5 +1,5 @@
 *!stepp version 0.1.0
-*!Written 08Feb2019
+*!Written 11Feb2019
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -100,7 +100,8 @@ program Estimate, eclass byable(recall)
 	marksample __touse__
 	/* End of marking sample to use */
 	
-	/* Check model type */	
+	/* Check model type */
+	local type = strlower("`type'")
 	if !("`type'" == "km" | "`type'" == "ci" | "`type'" == "glm") {
 		display as error "type can either be 'km', 'ci' or 'glm'"
 		exit
