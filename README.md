@@ -9,6 +9,6 @@ The `examples.do` file contains some examples taken from the literature as well 
 
 *Note:* the mlib file provided has been compiled using Stata 15.
 
-As a reference, you can refer to the following paper:
+As a reference, you can refer to the following seminal paper, as well as to those referred to in the `stepp` command documentation:
 
 [Bonetti M., Gelber R.D. Patterns of treatment effects in subsets of patients in clinical trials. Biostatistics 2004; 5(3):465-481.](https://academic.oup.com/biostatistics/article/5/3/465/310199)
