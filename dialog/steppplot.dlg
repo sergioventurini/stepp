@@ -95,17 +95,19 @@ END
 
 PROGRAM command
 BEGIN
-	put "steppplot"
-	beginoptions
-		option main.ck_subpop
-		option main.ck_trteff
-		option main.ck_diff
-		option main.ck_ratio
-		optionarg main.sp_level
-		option main.ck_pointwise
-		option main.ck_nopopsize
-		optionarg /asis main.ed_trtlabs
-		optionarg /oquoted main.ed_xtitle
-		optionarg /oquoted main.ed_ytitle
-	endoptions
+	if main.ck_subpop | main.ck_trteff | main.ck_diff | main.ck_ratio {
+		put "steppplot"
+		beginoptions
+			option main.ck_subpop
+			option main.ck_trteff
+			option main.ck_diff
+			option main.ck_ratio
+			optionarg main.sp_level
+			option main.ck_pointwise
+			option main.ck_nopopsize
+			optionarg /asis main.ed_trtlabs
+			optionarg /oquoted main.ed_xtitle
+			optionarg /oquoted main.ed_ytitle
+		endoptions
+	}
 END
