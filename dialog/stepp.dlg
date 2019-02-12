@@ -1,0 +1,309 @@
+/*
+
+  stepp.dlg
+
+*!version 0.1.0
+*!Written 12Feb2019
+*!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
+*!The following code is distributed under GNU General Public License version 3 (GPL-3)
+
+*/
+
+VERSION 15.1
+
+INCLUDE _std_large
+
+POSITION . . 500 620
+
+COPY copy1
+OK ok1, label(resource LBL_BU_OK)
+CANCEL can1, label(resource LBL_BU_CANCEL)
+SUBMIT sub1, label(resource LBL_BU_SUBMIT)
+
+HELP hlp1, view("help stepp")
+RESET res1
+
+SCRIPT PREINIT
+BEGIN
+	setscale_hadj resource REGRESS_DLG_HSCALE
+END
+
+SCRIPT POSTINIT
+BEGIN
+	program check_bytab
+END
+
+PROGRAM check_bytab
+BEGIN
+	if ! __MESSAGE.contains("__MI__") {
+		call script sub_set_by_on
+	}
+END
+
+DEFINE fromwd 120
+DEFINE fromsep +125
+DEFINE towd 30
+DEFINE tosep +35
+
+DIALOG main, label("stepp - Subpopulation Treatment Effect Pattern Plot (STEPP) analysis")	///
+	tabtitle(resource LBL_TAB_MODEL)
+BEGIN
+  TEXT tx_dv 		_lft	_top	_vnwd	.,			///
+		label(Response variable:)
+  VARNAME vn_dv		@ 	_ss	235	.,			///
+		numeric								///
+		label(Response variable:)
+
+	
+  TEXT tx_iv		255	_top	_vnwd	.,			///
+		label(Treatment indicator:)  
+	VARNAME vn_iv		@	_ss	235	.,			///
+		numeric								///
+		label(Treatment indicator:)
+	
+	
+  GROUPBOX gb_subp	_lft	_xls	_iwd	150,			///
+		label(Subpopulations)
+  TEXT tx_wintype       	_ilft        _ss				.        .,		///
+		label(Window type:)
+	COMBOBOX cb_wintype @ _ss 215 .,			///
+		dropdownlist                  		///					
+		contents(wintype_list)
+  TEXT tx_winbasedon       	265        90				.        .,		///
+		label(Windows are based on:)
+	COMBOBOX cb_winbasedon @ _ss 210 .,			///
+		dropdownlist                  		///					
+		contents(winbasedon_list)
+	TEXT tx_r1       	_ilft        +30				towd        .,		///
+		label(r1:)
+  SPINNER sp_r1			+25					@					100         .,		///
+		min(1)					max(c(N))			default(100)			///
+		option(minpatspop)
+  TEXT tx_r2       	265				@					towd        .,		///
+		label(r2:)
+  SPINNER sp_r2			+25					@					100         .,		///
+		min(1)					max(c(N))			default(50)							///
+		option(patspop)
+	TEXT tx_covsubp       	_ilft        +25				.        .,		///
+		label(Covariate:)
+	VARNAME vn_covsubp		@	_ss	455	.,			///
+		numeric								///
+		label(Covariate:)	option(covsubp)
+
+
+	GROUPBOX gb_mtype	_lft	+50	_iwd	235,			///
+		label(Model)
+  TEXT tx_mtype       	_ilft        +20				.        .,		///
+		label(Type:)
+	COMBOBOX cb_mtype _ilft _ss 230 .,			///
+		dropdownlist                  		///					
+		contents(type_list) onselchange(program switch_toglm)
+	
+	TEXT tx_timepoint       	265        @				.        .,		///
+		label(Timepoint:)
+	EDIT ed_timepoint       	+65        @				143        .,		///
+		label(Timepoint:)	numonly		option(timepoint)
+
+	TEXT tx_km       	_ilft        300				.        .,		///
+		label(Failure variable:)
+	VARNAME vn_km		@	_ss	455	.,			///
+		numeric								///
+		label(Failure variable:) option(failure)
+	TEXT tx_ci       	_ilft        300				.        .,		///
+		label(Event variable:)
+	VARNAME vn_ci		@	_ss	455	.,			///
+		numeric								///
+		label(Event variable:) option(comprisk)
+	
+  TEXT tx_glmfamily       	_ilft        +25				230        .,		///
+		label(GLM family:)
+	COMBOBOX cb_glmfamily @ _ss 215 .,			///
+		dropdownlist                  		///
+		contents(glmfamily_list)	option(family)
+  TEXT tx_glmlink       	265        345				.        .,		///
+		label(GLM link function:)
+	COMBOBOX cb_glmlink @ _ss 210 .,			///
+		dropdownlist                  		///
+		contents(glmlink_list)	option(link)
+
+  TEXT tx_glmcov       	_ilft        +25				.        .,		///
+		label(Additional covariates (optional):)
+	VARLIST vl_glmcov	_ilft			_ss					455						.,			///
+		label(Additional covariates (optional):)	option(covariates)
+	CHECKBOX ck_nocons	_ilft			+25					.						.,			///
+		label(resource LBL_NOCONSTANT)					///
+		option("noconstant")
+
+
+	GROUPBOX gb_options	_lft	+45	_iwd	_ht10,			///
+		label(Other options)
+  TEXT tx_trtlist       	_ilft        _ss				.        .,		///
+		label(Treatment list:)
+	EDIT ed_trtlist       	_ilft        _ss				455        .,		///
+		label(Treatment list:)	option(trts)
+
+	TEXT tx_nperm       	_ilft        550				.        .,		///
+		label(Replications:)
+	SPINNER sp_nperm       	+77        550				125        .,		///
+		min(2) max(10000000) default(50)				///
+		option(nperm)
+	TEXT tx_rseed       	265        550				.        .,		///
+		label(Random seed:)
+	EDIT ed_rseed       	+85        550				125        .,		///
+		label(Random seed:)	numonly
+	CHECKBOX ck_notest	_ilft			+25					.						.,			///
+		label(Do not perform the permutation test)					///
+		option("notest") 										///
+		onclickon(script turntestoff) onclickoff(script turnteston)
+END
+
+LIST wintype_list
+BEGIN
+  sliding
+  tail-oriented
+END
+
+LIST winbasedon_list
+BEGIN
+  all
+  event
+END
+
+LIST type_list
+BEGIN
+  km (Kaplan-Meier)
+  ci (cumulative incidence)
+  glm (generalized linear models)
+END
+
+LIST glmfamily_list
+BEGIN
+  gaussian
+  binomial
+  poisson
+END
+
+LIST glmlink_list
+BEGIN
+  identity
+  logit
+  logarithm
+END
+
+PROGRAM switch_toglm
+BEGIN
+	if main.cb_mtype.iseq("glm (generalized linear models)") {
+		call gaction main.tx_km.disable
+		call gaction main.vn_km.disable
+		call gaction main.tx_ci.disable
+		call gaction main.vn_ci.disable
+		call gaction main.tx_timepoint.disable
+		call gaction main.ed_timepoint.disable
+		call gaction main.tx_glmfamily.enable
+		call gaction main.cb_glmfamily.enable
+		call gaction main.tx_glmlink.enable
+		call gaction main.cb_glmlink.enable
+		call gaction main.tx_glmcov.enable
+		call gaction main.vl_glmcov.enable
+		call gaction main.ck_nocons.enable
+	}
+	else {
+		if main.cb_mtype.iseq("km (Kaplan-Meier)") {
+			call gaction main.tx_km.show
+			call gaction main.vn_km.show
+			call gaction main.tx_km.enable
+			call gaction main.vn_km.enable
+			call gaction main.tx_ci.hide
+			call gaction main.vn_ci.hide
+			call gaction main.tx_ci.disable
+			call gaction main.vn_ci.disable
+		}
+		if main.cb_mtype.iseq("ci (cumulative incidence)") {
+			call gaction main.tx_km.hide
+			call gaction main.vn_km.hide
+			call gaction main.tx_km.disable
+			call gaction main.vn_km.disable
+			call gaction main.tx_ci.show
+			call gaction main.vn_ci.show
+			call gaction main.tx_ci.enable
+			call gaction main.vn_ci.enable
+		}
+		call gaction main.tx_timepoint.enable
+		call gaction main.ed_timepoint.enable
+		call gaction main.tx_glmfamily.disable
+		call gaction main.cb_glmfamily.disable
+		call gaction main.tx_glmlink.disable
+		call gaction main.cb_glmlink.disable
+		call gaction main.tx_glmcov.disable
+		call gaction main.vl_glmcov.disable
+		call gaction main.ck_nocons.disable
+	}
+END
+
+SCRIPT turnteston
+BEGIN
+	main.tx_nperm.enable
+	main.sp_nperm.enable
+	main.tx_rseed.enable
+	main.ed_rseed.enable
+END
+
+SCRIPT turntestoff
+BEGIN
+	main.tx_nperm.disable
+	main.sp_nperm.disable
+	main.tx_rseed.disable
+	main.ed_rseed.disable
+END
+
+INCLUDE sub_by_ifin_over_subpop
+
+PROGRAM command
+BEGIN
+	require main.vn_dv
+	require main.vn_iv
+	
+	put /program by_output " "
+	put "stepp "
+	varlist main.vn_dv main.vn_iv
+	put " " /program ifin_output
+	beginoptions
+		if main.cb_mtype.iseq("km (Kaplan-Meier)") {
+			put " " /program "type(km) "
+		}
+		if main.cb_mtype.iseq("ci (cumulative incidence)") {
+			put " " /program "type(ci) "
+		}
+		if main.cb_mtype.iseq("glm (generalized linear models)") {
+			put " " /program "type(glm) "
+		}
+		optionarg main.sp_r1
+		optionarg main.sp_r2
+		optionarg main.ed_trtlist
+		optionarg main.vn_covsubp
+		optionarg main.ed_timepoint
+		if main.cb_mtype.iseq("km (Kaplan-Meier)") {
+			optionarg main.vn_km
+		}
+		if main.cb_mtype.iseq("ci (cumulative incidence)") {
+			optionarg main.vn_ci
+		}
+		if main.cb_mtype.iseq("glm (generalized linear models)") {
+			optionarg main.cb_glmfamily
+			optionarg main.cb_glmlink
+			optionarg main.vl_glmcov
+			option main.ck_nocons
+		}
+		if !main.ck_notest {
+			optionarg main.sp_nperm
+		}
+		else {
+			option main.ck_notest
+		}
+	endoptions
+	
+// 	if main.sp_nperm.isgt(50) {
+// 		stopbox rusure "The number of replications provided will require some time to complete." ///
+// 			"Are you sure you want to continue?"
+// 	}
+END

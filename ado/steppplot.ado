@@ -1,5 +1,5 @@
 *!steppplot version 0.3.0
-*!Written 11Feb2019
+*!Written 12Feb2019
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -26,7 +26,7 @@ program steppplot
 end
 
 program _steppplot
-	syntax [ , Subpop Trteff Diff Ratio All Conf(numlist >0 <1 min=1 max=1) ///
+	syntax [ , Subpop Trteff Diff Ratio All Conf(numlist >0 <100 min=1 max=1) ///
 		Pointwise noPOPsize TRTlabs(string asis) Xtitle(string) Ytitle(string) ]
 	
 	gettoken subcmd rest : 0 , parse(", ")
@@ -44,7 +44,12 @@ program _steppplot
 	local isnotest : list notest in props
 	local dq `"""'
 	
-	if ("`conf'" == "") local conf = 0.95
+	if ("`conf'" != "") {
+		local conf = `conf'/100
+	}
+	else {
+		local conf = 0.95
+	}
 	
 	tempname alpha zcrit
 	mata: `alpha' = 1 - strtoreal(st_local("conf"))

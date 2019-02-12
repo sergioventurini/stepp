@@ -1,0 +1,111 @@
+/*
+
+  steppplot.dlg
+
+*!version 0.1.0
+*!Written 12Feb2019
+*!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
+*!The following code is distributed under GNU General Public License version 3 (GPL-3)
+
+*/
+
+VERSION 15.1
+
+INCLUDE _std_large
+
+POSITION . . 500 420
+
+COPY copy1
+OK ok1, label(resource LBL_BU_OK)
+CANCEL can1, label(resource LBL_BU_CANCEL)
+SUBMIT sub1, label(resource LBL_BU_SUBMIT)
+
+LIST levels
+BEGIN
+	"99.9"
+	"99.5"
+	"99"
+	"97.5"
+	"95"
+	"90"
+	"80"
+END
+
+HELP hlp1, view("help stepp")
+RESET res1
+
+SCRIPT PREINIT
+BEGIN
+	setscale_hadj resource REGRESS_DLG_HSCALE
+END
+
+DIALOG main
+BEGIN
+  DEFINE _x _lft
+  DEFINE _cx _spr2b
+  DEFINE _y _top
+
+	FRAME fr_all _x _y 480 400
+	
+  COMBOBOX  sp_level	+20	+20	_spwd	.,		///
+	dropdown						///
+	label(resource LBL_TX_LEVEL)				///
+	default(c(level))					///
+	contents(levels)					///
+	option(conf)
+  TEXT     tx_level	_spsep	@	_cx	.,  		///
+	label(resource LBL_TX_LEVEL)
+	
+  CHECKBOX ck_pointwise	_lft2	@	_cwd2	.,			///
+	label(Pointwise confidence intervals)				///
+	option("pointwise")
+
+  CHECKBOX ck_subpop	30	+35	.	.,			///
+	label("Subpopulations")				///
+	option("subpop")
+  CHECKBOX ck_trteff	30	+20	.	.,			///
+	label("Treatment effects")				///
+	option("trteff")
+  CHECKBOX ck_diff	30	+20	.	.,			///
+	label("Difference in treatment effects")				///
+	option("diff")
+  CHECKBOX ck_ratio	30	+20	.	.,			///
+	label("Ratio of treatment effects")				///
+	option("ratio")
+	
+  TEXT tx_trtlabs       	30        +35				530        .,		///
+		label(Treatment labels:)
+	EDIT ed_trtlabs       	@        _ss				440        .,		///
+		label(Treatment labels:)	option(trtlabs)
+	
+  TEXT tx_xtitle       	30        +35				530        .,		///
+		label(X axis title:)
+	EDIT ed_xtitle       	@        _ss				440        .,		///
+		label(X axis title:)	option(xtitle)
+	
+  TEXT tx_ytitle       	30        +35				530        .,		///
+		label(Y axis title:)
+	EDIT ed_ytitle       	@        _ss				440        .,		///
+		label(Y axis title:)	option(ytitle)
+
+	CHECKBOX ck_nopopsize	30			+35					.						.,			///
+		label(Do not plot subpopulation sizes along the X axis)					///
+		option("nopopsize")
+END
+
+PROGRAM command
+BEGIN
+	put "steppplot"
+	beginoptions
+		option main.ck_subpop
+		option main.ck_trteff
+		option main.ck_diff
+		option main.ck_ratio
+		optionarg main.sp_level
+		option main.ck_pointwise
+		option main.ck_nopopsize
+		optionarg /asis main.ed_trtlabs
+		optionarg /oquoted main.ed_xtitle
+		optionarg /oquoted main.ed_ytitle
+	endoptions
+END

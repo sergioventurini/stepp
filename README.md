@@ -3,7 +3,7 @@
 ###### Stata version required: at least 15.1
 Stata package for subpopulation treatment effect pattern plots (STEPP).
 
-To use the package copy the ado, mlib, data and help files in one of the Stata's system directories. The easiest way to have the package working is to copy everything in the `PERSONAL` directory returned by the `adopath` command.
+To use the package copy the ado, mlib, data, dlg and help files in one of the Stata's system directories. The easiest way to have the package working is to copy everything in the `PERSONAL` directory returned by the `adopath` command.
 
 The `examples.do` file contains some examples taken from the literature as well as some simulated data examples.
 

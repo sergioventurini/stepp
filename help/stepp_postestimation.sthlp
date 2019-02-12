@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0  11Feb2019}{...}
+{* *! version 0.1.0  12Feb2019}{...}
 {vieweralsosee "stepp" "help stepp"}{...}
 {vieweralsosee "steppplot" "help steppplot"}{...}
 {viewerjumpto "Postestimation commands" "stepp postestimation##description"}{...}

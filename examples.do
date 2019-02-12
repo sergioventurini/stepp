@@ -779,7 +779,7 @@ use ./data/simdataKM, clear
 stepp time trt, covsubpop(covariate) failure(censor) type(km) patspop(300) ///
 	minpatspop(200) trts(1 2) timepoint(4.0) nperm(25) //notest
 
-steppplot, trteff conf(0.95) //nopop
+steppplot, trteff conf(95) //nopop
 
 /* Example 7 */
 /* --------- */
@@ -788,7 +788,7 @@ use ./data/simdataCI, clear
 stepp time trt, covsubpop(covariate) comprisk(type) type(ci) patspop(300) ///
 	minpatspop(200) trts(0 1) timepoint(1.0) nperm(25) //notest
 
-steppplot, all conf(0.95) //nopop
+steppplot, all conf(95) //nopop
 
 /* Example 8 */
 /* --------- */
@@ -816,7 +816,7 @@ stepp ADorLE trtA, covsubpop(AGE) type(glm) patspop(100) ///
 	family(binomial) link(logit)
 */
 
-steppplot, all conf(0.95) trtlabs(1 "Placebo" 2 "81 mg aspirin") ///
+steppplot, all conf(95) trtlabs(1 "Placebo" 2 "81 mg aspirin") ///
 	xtitle("Subpopulations by median age") ytitle(Risk) //nopop
 
 /* Example 9 */
@@ -826,7 +826,7 @@ use ./data/bigKM, clear
 stepp time trt, covsubpop(ki67) failure(event) type(km) patspop(150) ///
 	minpatspop(50) trts(1 2) timepoint(4.0) nperm(25) //notest
 
-steppplot, all conf(0.95) trtlabs(1 Taxmoxifen 2 Letrozole) ///
+steppplot, all conf(95) trtlabs(1 Taxmoxifen 2 Letrozole) ///
 	xtitle("Median Ki-67 LI in subpopulation (% immunoreactivity)") ///
 	ytitle("4-year disease free survival") //nopop
 
@@ -837,6 +837,6 @@ use ./data/bigCI, clear
 stepp time trt, covsubpop(ki67) comprisk(event) type(ci) patspop(150) ///
 	minpatspop(50) trts(1 2) timepoint(4.0) nperm(25) //notest
 
-steppplot, all conf(0.95) trtlabs(1 Taxmoxifen 2 Letrozole) ///
+steppplot, all conf(95) trtlabs(1 Taxmoxifen 2 Letrozole) ///
 	xtitle("Median Ki-67 LI in subpopulation (% immunoreactivity)") ///
 	ytitle("4-year disease free survival") //nopop
