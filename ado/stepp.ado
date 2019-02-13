@@ -308,7 +308,7 @@ program Estimate, eclass byable(recall)
 
 	/* Clean up */
 	if ("`cleanup'" == "") {
-		capture mata: cleanup()   // all objectes are deleted apart from __steppes__
+// 		capture mata: cleanup()   // all objectes are deleted apart from __steppes__
 		mata: st_rclear()
 	}
 	/* End of cleaning up */
