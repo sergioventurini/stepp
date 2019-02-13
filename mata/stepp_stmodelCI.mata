@@ -348,6 +348,9 @@ struct steppes_result scalar stmodelCI_class::test(
 						logHRs[p, s] = slogHRs[s] - overallSlogHR
 					}
 				}
+				else {
+					add_perm = 1
+				}
 l10:		terminate++
 				if (terminate >= nperm + 10000) {
 					printf("{err}After permuting %f plus 10000 times, ", nperm)
