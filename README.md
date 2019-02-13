@@ -1,7 +1,7 @@
 # stepp
 ###### Current release: 0.1.0
 ###### Stata version required: at least 15.1
-Stata package for subpopulation treatment effect pattern plots (STEPP). The package is a porting to Stata of the `stepp` [R package](https://cran.r-project.org/web/packages/stepp/index.html).
+Stata package for subpopulation treatment effect pattern plots (STEPP). The package is a porting to Stata of the [`stepp` R package](https://cran.r-project.org/web/packages/stepp/index.html).
 
 To use the package copy the ado, data, dlg, help and mlib files in one of the Stata's system directories. The easiest way to have the package working is to copy everything in the `PERSONAL` directory returned by the `adopath` command.
 
