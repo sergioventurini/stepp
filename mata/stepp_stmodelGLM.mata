@@ -1,9 +1,9 @@
 *!stepp_stmodelGLM version 0.1.0
-*!Written 12Feb2019
+*!Written 14Feb2019
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
-version 14.2
+version 15.1
 
 mata:
 
@@ -169,8 +169,25 @@ struct steppes_effect scalar stmodelGLM_class::estimate(
 				seli_idx = st_addvar("int", seli_name = st_tempname())
 				st_store(selectindex(st_data(., touse)), seli_idx, seli_ind)
 
-				model_glm = "glm " + fmla + " if " + seli_name + ", family(" + glm +
-					") link(" + link + ")"
+				if (glm == "gaussian") {
+					if (link == "identity") {
+						model_glm = "regress " + fmla + " if " + seli_name + ","
+					}
+				}
+				else if (glm == "binomial") {
+					if (link == "logit") {
+						model_glm = "logit " + fmla + " if " + seli_name + ","
+					}
+				}
+				else if (glm == "poisson") {
+					if (link == "logarithm") {
+						model_glm = "poisson " + fmla + " if " + seli_name + ","
+					}
+				}
+				else {
+					model_glm = "glm " + fmla + " if " + seli_name + ", family(" + glm +
+						") link(" + link + ")"
+				}
 				if (!has_intercept) model_glm = model_glm + " noconstant"
 				stata("quietly " + model_glm, 1)
 
@@ -283,7 +300,24 @@ struct steppes_effect scalar stmodelGLM_class::estimate(
 			temp_Ratios.put("logHRw", logHRw)
 			
 			// estimate the overall effect
-			model_glm = "glm " + fmla + ", family(" + glm + ") link(" + link + ")"
+			if (glm == "guassian") {
+				if (link == "identity") {
+					model_glm = "regress " + fmla + ","
+				}
+			}
+			if (glm == "binomial") {
+				if (link == "logit") {
+					model_glm = "logit " + fmla + ","
+				}
+			}
+			else if (glm == "poisson") {
+				if (link == "logarithm") {
+					model_glm = "poisson " + fmla + ","
+				}
+			}
+			else {
+				model_glm = "glm " + fmla + ", family(" + glm + ") link(" + link + ")"
+			}
 			if (!has_intercept) model_glm = model_glm + " noconstant"
 			stata("quietly " + model_glm, 1)
 
@@ -577,8 +611,25 @@ struct steppes_result scalar stmodelGLM_class::test(
 					seli_idx = st_addvar("int", seli_name = st_tempname())
 					st_store(selectindex(st_data(., touse)), seli_idx, seli)
 
-					model_glm = "glm " + fmla + " if " + seli_name + ", family(" + glm +
-						") link(" + link + ")"
+					if (glm == "gaussian") {
+						if (link == "identity") {
+							model_glm = "regress " + fmla + " if " + seli_name + ","
+						}
+					}
+					else if (glm == "binomial") {
+						if (link == "logit") {
+							model_glm = "logit " + fmla + " if " + seli_name + ","
+						}
+					}
+					else if (glm == "poisson") {
+						if (link == "logarithm") {
+							model_glm = "poisson " + fmla + " if " + seli_name + ","
+						}
+					}
+					else {
+						model_glm = "glm " + fmla + " if " + seli_name + ", family(" + glm +
+							") link(" + link + ")"
+					}
 					if (!has_intercept) model_glm = model_glm + " noconstant"
 					stata("quietly " + model_glm, 1)
 				
@@ -674,8 +725,25 @@ struct steppes_result scalar stmodelGLM_class::test(
 				selj_idx = st_addvar("int", selj_name = st_tempname())
 				st_store(selectindex(st_data(., touse)), selj_idx, selj)
 
-				model_glm = "glm " + fmla + " if " + selj_name + ", family(" + glm +
-					") link(" + link + ")"
+				if (glm == "gaussian") {
+					if (link == "identity") {
+						model_glm = "regress " + fmla + " if " + selj_name + ","
+					}
+				}
+				else if (glm == "binomial") {
+					if (link == "logit") {
+						model_glm = "logit " + fmla + " if " + selj_name + ","
+					}
+				}
+				else if (glm == "poisson") {
+					if (link == "logarithm") {
+						model_glm = "poisson " + fmla + " if " + selj_name + ","
+					}
+				}
+				else {
+					model_glm = "glm " + fmla + " if " + selj_name + ", family(" + glm +
+						") link(" + link + ")"
+				}
 				if (!has_intercept) model_glm = model_glm + " noconstant"
 				stata("quietly " + model_glm, 1)
 			
@@ -1000,7 +1068,7 @@ void print_estimate_GLM(class steppes_class scalar x, string scalar family,
 
 void print_cov_GLM(class steppes_class scalar stobj, real vector trts)
 {
-	real scalar nsubpop, j, ns, longest
+	real scalar nsubpop, j, ns
 	class AssociativeArray scalar temp_t, t
 	string vector names
 	struct steppes_result scalar result_empty
@@ -1012,7 +1080,6 @@ void print_cov_GLM(class steppes_class scalar stobj, real vector trts)
 		names[j] = "SP" + strofreal(j)
 	}
 
-	longest = min((max(strlen(names)), 11))
 	if (stobj.result != result_empty) {
 		temp_t = (*stobj.result.Res)
 		for (j = 1; j <= (stobj.result.ntrts - 1); j++) {
@@ -1029,7 +1096,6 @@ void print_cov_GLM(class steppes_class scalar stobj, real vector trts)
 			st_matrixcolstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
 			stata("disp_corr, matrix(__tmp_matrix__)", 0)
 			stata("matrix drop __tmp_matrix__", 1)
-// 			print_matrix(t.get("sigma"), names, names, "", ., longest)
 
 			printf("\n")
 			printf("{txt}The covariance matrix of the log effect ratios for the ")
@@ -1039,7 +1105,6 @@ void print_cov_GLM(class steppes_class scalar stobj, real vector trts)
 			st_matrixcolstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
 			stata("disp_corr, matrix(__tmp_matrix__)", 0)
 			stata("matrix drop __tmp_matrix__", 1)
-// 			print_matrix(t.get("HRsigma"), names, names, "", ., longest)
 		}
 	}
 }

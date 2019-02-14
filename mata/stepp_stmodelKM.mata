@@ -1,9 +1,9 @@
 *!stepp_stmodelKM version 0.1.0
-*!Written 12Feb2019
+*!Written 14Feb2019
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
-version 14.2
+version 15.1
 
 mata:
 
@@ -592,7 +592,7 @@ void print_estimate_KM(class steppes_class scalar x, real scalar timePoint,
 void print_cov_KM(class steppes_class scalar stobj, real scalar timePoint,
 	real vector trts)
 {
-	real scalar nsubpop, j, ns, longest
+	real scalar nsubpop, j, ns
 	class AssociativeArray scalar temp_t, t
 	string vector names
 	struct steppes_result scalar result_empty
@@ -604,7 +604,6 @@ void print_cov_KM(class steppes_class scalar stobj, real scalar timePoint,
 		names[j] = "SP" + strofreal(j)
 	}
 
-	longest = min((max(strlen(names)), 11))
 	if (stobj.result != result_empty) {
 		temp_t = (*stobj.result.Res)
 		for (j = 1; j <= (stobj.result.ntrts - 1); j++) {
@@ -621,7 +620,6 @@ void print_cov_KM(class steppes_class scalar stobj, real scalar timePoint,
 			st_matrixcolstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
 			stata("disp_corr, matrix(__tmp_matrix__)", 0)
 			stata("matrix drop __tmp_matrix__", 1)
-// 			print_matrix(t.get("sigma"), names, names, "", ., longest)
 
 			printf("\n")
 			printf("{txt}The covariance matrix of the log hazard ratios for the ")
@@ -631,7 +629,6 @@ void print_cov_KM(class steppes_class scalar stobj, real scalar timePoint,
 			st_matrixcolstripe("__tmp_matrix__", (J(nsubpop, 1, ""), names))
 			stata("disp_corr, matrix(__tmp_matrix__)", 0)
 			stata("matrix drop __tmp_matrix__", 1)
-// 			print_matrix(t.get("HRsigma"), names, names, "", ., longest)
 		}
 	}
 }

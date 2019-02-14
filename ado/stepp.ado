@@ -1,10 +1,10 @@
 *!stepp version 0.1.0
-*!Written 12Feb2019
+*!Written 14Feb2019
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
 program stepp, byable(onecall)
-	version 14.2
+	version 15.1
 	syntax [anything] [if] [in] [, * ]
 	
 	if replay() {
@@ -42,11 +42,12 @@ program stepp, byable(onecall)
 	`version' `BY' Estimate `0'  // version is not necessary
 end
 
+capture program drop Estimate
 program Estimate, eclass byable(recall)
-	version 14.2
+	version 15.1
 	syntax varlist(min=2 max=2 numeric) [if] [in], ///
 		TYpe(string) PATspop(numlist integer >0 max=1) ///
-		MINPatspop(numlist integer >0 max=1) TRts(numlist integer min=2) ///
+		MINPatspop(numlist integer >0 max=1) TRts(numlist integer ascending min=2) ///
 		COVSubpop(varname numeric) [ WINType(string) WINBasedon(string) ///
 		Failure(varname numeric) COMPrisk(varname numeric) COVariates(varlist) ///
 		TImepoint(numlist >0 max=1) FAmily(string) Link(string) noCONStant ///
@@ -175,7 +176,16 @@ program Estimate, eclass byable(recall)
 	/* End of parsing list of variables provided */
 
 	/* Parse trts numlist */
-	///
+	tempname is_trts_uncorrect
+	mata: `is_trts_uncorrect' = ///
+		any(strtoreal(tokens(st_local("trts")))' :!= uniqrows(st_data(., "`trt'", "`__touse__'")))
+	mata: st_local("is_trts_uncorrect", strofreal(`is_trts_uncorrect'))
+	if (`is_trts_uncorrect') {
+		display as error "treatment labels provided in the trts() option " _continue
+		display as error "do not correspond to those included in the " _continue
+		display as error "treatment column"
+		exit
+	}
 	/* End of parsing trts numlist */
 
 	/* Parse noconstant option */
@@ -315,7 +325,7 @@ program Estimate, eclass byable(recall)
 end
 
 program disp_corr
-	version 14.2
+	version 15.1
 	syntax , matrix(string) [ Title(string) CUToff(real 0) ]
 
 	/* Options:
