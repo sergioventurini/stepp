@@ -1,0 +1,3 @@
+v 0.1.0
+d 'STEPP': module for subpopulation treatment effect pattern plots (STEPP) analysis.
+p stepp

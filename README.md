@@ -3,12 +3,46 @@
 ###### Stata version required: at least 15.1
 Stata package for subpopulation treatment effect pattern plots (STEPP). The package is a porting to Stata of the [`stepp` R package](https://cran.r-project.org/web/packages/stepp/index.html).
 
-To use the package copy the ado, data, dlg, help and mlib files in one of the Stata's system directories. The easiest way to have the package working is to copy everything in the `PERSONAL` directory returned by the `adopath` command.
+# Installation note    
 
-The `examples.do` file contains some examples taken from the literature as well as some simulated data examples.
+To install `stepp` directly from GitHub you need to use the `github` Stata command. You can install the latest version of the `github` command by executing the following code in your Stata session:
 
-*Note:* the mlib file provided has been compiled using Stata 15.
+    net install github, from("https://haghish.github.io/github/")
 
-As a reference, you can refer to the following seminal paper, as well as to those referred to in the `stepp` command documentation:
+Then, you can install `stepp` simply using the following code in Stata:
 
-[Bonetti M., Gelber R.D. Patterns of treatment effects in subsets of patients in clinical trials. Biostatistics 2004; 5(3):465-481.](https://academic.oup.com/biostatistics/article/5/3/465/310199)
+    github install sergioventurini/stepp
+
+Alternatively, you can install the package manually downloading the files from this GitHub repository and placing it in your Stata `PERSONAL` directory (if you don't know what this is, run the `adopath` command).
+
+The `examples.do` file contains many examples taken from the literature as well as some simulated data examples. All the example data sets are downloaded and put in place together with the rest of the package.
+
+**Note:** if you installed the package prior to 9 May 2019, you need to manually remove the previous installation. You can do it by deleting all the files used by `stepp` from your Stata `PERSONAL` directory.
+
+# Authors
+Sergio Venturini, Department of Decision Sciences, Università Bocconi, Milan, Italy
+
+E-mail: sergio.venturini@unibocconi.it
+
+Marco Bonetti, Department of Social and Political Sciences, Università Bocconi, Milan, Italy
+
+E-mail: marco.bonetti@unibocconi.it
+
+Richard Gelber, Department of Biostatistics, Harvard T. H. Chan School of Public Health, Boston, MA, USA
+
+E-mail: gelber@jimmy.harvard.edu
+
+# Bugs
+In case you find any bug, please send us an e-mail or open an issue on GitHub.
+
+# Citation    
+You can cite the `stepp` package as:
+
+Venturini, S., Mehmetoglu, M. (2019). stepp: A Stata Package for Structural Equation Modeling with Partial Least Squares. Journal of Statistical Software, 88(8)1-35
+
+Paper webpage: https://www.jstatsoft.org/article/view/v088i08
+
+GitHub repository: https://github.com/sergioventurini/stepp
+
+# Copyright
+This software is distributed under the GPL-3 license (see LICENSE file).
