@@ -35,12 +35,10 @@ E-mail: gelber@jimmy.harvard.edu
 # Bugs
 In case you find any bug, please send us an e-mail or open an issue on GitHub.
 
-# Citation    
+# Citation
 You can cite the `stepp` package as:
 
-Venturini, S., Mehmetoglu, M. (2019). stepp: A Stata Package for Structural Equation Modeling with Partial Least Squares. Journal of Statistical Software, 88(8)1-35
-
-Paper webpage: https://www.jstatsoft.org/article/view/v088i08
+Venturini, S., Bonetti, M., Gelber, R. D. (2019). stepp: A Stata Package for Subpopulation Treatment Effect Pattern Plots (STEPP) Analysis.
 
 GitHub repository: https://github.com/sergioventurini/stepp
 
