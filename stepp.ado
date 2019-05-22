@@ -1,8 +1,9 @@
 *!stepp version 0.1.0
-*!Written 14Feb2019
+*!Written 22May2019
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
+program drop stepp
 program stepp, byable(onecall)
 	version 15.1
 	syntax [anything] [if] [in] [, * ]
@@ -42,7 +43,7 @@ program stepp, byable(onecall)
 	`version' `BY' Estimate `0'  // version is not necessary
 end
 
-capture program drop Estimate
+program drop Estimate
 program Estimate, eclass byable(recall)
 	version 15.1
 	syntax varlist(min=2 max=2 numeric) [if] [in], ///
@@ -52,7 +53,7 @@ program Estimate, eclass byable(recall)
 		Failure(varname numeric) COMPrisk(varname numeric) COVariates(varlist) ///
 		TImepoint(numlist >0 max=1) FAmily(string) Link(string) noCONStant ///
 		noTEst NPerm(numlist integer >0 max=1) Seed(numlist integer >0 max=1) ///
-		noCLeanup ]
+		Eps(real 0.001) noCLeanup ]
 	
 	/* Options:
 	   --------
@@ -90,6 +91,7 @@ program Estimate, eclass byable(recall)
 													--> number of replications in the permutaton test
 		 seed(numlist integer >0 max=1)
 													--> random seed
+     eps(real 0.001)      --> small value to add to zero times when (type == "km")
 		 nocleanup						--> Mata temporary objects are not removed
 															(undocumented)
 	 */
@@ -212,6 +214,26 @@ program Estimate, eclass byable(recall)
 	}
 	/* End of parsing trts option */
 	
+  /* Parse eps option */
+  if ("`type'" == "km") {
+    if (`eps' < 0) {
+      display as error "eps option must be strictly positive"
+      exit
+    }
+    
+    // generate a new (fake) response with eps added (used when there are times equal to zero)
+    local eps_added = 0
+    tempvar response_eps
+    quietly count if `response' == 0
+    if (r(N) > 0) {
+      local eps_added = 1
+      quietly generate `response_eps' = `response' + `eps'
+      local response_orig = "`response'"
+      local response = "`response_eps'"
+    }
+  }
+  /* End of parsing eps option */
+  
 	/* Generate model's subpopulations */
 	tempname stwin subp
 	mata: `stwin' = stwin_wrap("`wintype'", strtoreal("`minpatspop'"), ///
@@ -257,6 +279,10 @@ program Estimate, eclass byable(recall)
 	
 	/* Display results */
 	mata: __steppes__.print(strupper("`type'"), 1, 1, 1)
+  if (`eps_added') {
+    display as text "Note: the 'eps' option value has been added to the `response_orig' variable"
+    display as text "      to avoid the exclusion of times equal to zero"
+  }
 	/* End of displaying results */
 	
 	/* Return values */
@@ -279,7 +305,13 @@ program Estimate, eclass byable(recall)
 	ereturn local estat_cmd "stepp_estat"
 	ereturn local cmdline "stepp `cmdline'"
 	ereturn local cmd "stepp"
-	ereturn local responsevar "`response'"
+	if (("`type'" == "km") & (`eps_added')) {
+    ereturn local responsevar "`response_orig'"
+    ereturn scalar eps = `eps'
+  }
+  else {
+    ereturn local responsevar "`response'"
+  }
 	ereturn local trtvar "`trt'"
 	if ("`type'" == "km") {
 		ereturn local censorvar "`failure'"
@@ -324,6 +356,7 @@ program Estimate, eclass byable(recall)
 	/* End of cleaning up */
 end
 
+program drop disp_corr
 program disp_corr
 	version 15.1
 	syntax , matrix(string) [ Title(string) CUToff(real 0) ]

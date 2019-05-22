@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0  12Feb2019}{...}
+{* *! version 0.1.0  22May2019}{...}
 {vieweralsosee "stepp postestimation" "help stepp postestimation"}{...}
 {vieweralsosee "steppplot" "help steppplot"}{...}
 {viewerjumpto "Syntax" "stepp##syntax"}{...}
@@ -98,6 +98,7 @@ to use with {cmdab:type(glm)}{p_end}
 {synopt:{cmdab:note:st}}suppress the permutation test{p_end}
 {synopt:{opt np:erm(#)}}number of replications to use in the permutation test{p_end}
 {synopt:{opt s:eed(#)}}seed number{p_end}
+{synopt:{opt e:ps(#)}}value used in case of times equal to zero{p_end}
 {synoptline}
 
 {p 4 6 2}
@@ -223,6 +224,10 @@ number of permutation replications to use in the test.
 {phang}{opt seed(#)}
 seed number to use for making the permutation test results reproducible.
 
+{phang}{opt eps(#)}
+value added to the observed times with {opt type(km)} to avoid the exclusion
+of times equal to zero.
+
 
 {marker examples}{...}
 {title:Examples}
@@ -300,6 +305,7 @@ when {opt type(km)} or {opt type(ci)} are chosen{p_end}
 subpopulations{p_end}
 {synopt:{cmd:e(r2)}}number of patients in each subpopulation{p_end}
 {synopt:{cmd:e(ntrts)}}number of treatments considered{p_end}
+{synopt:{cmd:e(eps)}}value added to the response in case of times equal to zero{p_end}
 {synopt:{cmd:e(nsubpop)}}number of subpopulations generated{p_end}
 {synopt:{cmd:e(oObs_{it:j})}}effect estimate of the entire population based on
 the {it:j}-th treatment{p_end}
