@@ -3,7 +3,6 @@
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
-program drop stepp
 program stepp, byable(onecall)
 	version 15.1
 	syntax [anything] [if] [in] [, * ]
@@ -43,7 +42,6 @@ program stepp, byable(onecall)
 	`version' `BY' Estimate `0'  // version is not necessary
 end
 
-program drop Estimate
 program Estimate, eclass byable(recall)
 	version 15.1
 	syntax varlist(min=2 max=2 numeric) [if] [in], ///
@@ -356,7 +354,6 @@ program Estimate, eclass byable(recall)
 	/* End of cleaning up */
 end
 
-program drop disp_corr
 program disp_corr
 	version 15.1
 	syntax , matrix(string) [ Title(string) CUToff(real 0) ]
