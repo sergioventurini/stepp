@@ -51,7 +51,7 @@ program Estimate, eclass byable(recall)
 		Failure(varname numeric) COMPrisk(varname numeric) COVariates(varlist) ///
 		TImepoint(numlist >0 max=1) FAmily(string) Link(string) noCONStant ///
 		noTEst NPerm(numlist integer >0 max=1) Seed(numlist integer >0 max=1) ///
-		Eps(real 0.001) noCLeanup ]
+		Eps(real 0.00001) noCLeanup ]
 	
 	/* Options:
 	   --------
@@ -89,7 +89,7 @@ program Estimate, eclass byable(recall)
 													--> number of replications in the permutaton test
 		 seed(numlist integer >0 max=1)
 													--> random seed
-     eps(real 0.001)      --> small value to add to zero times when (type == "km")
+     eps(real 0.00001)    --> small value to add to zero times when (type == "km")
 		 nocleanup						--> Mata temporary objects are not removed
 															(undocumented)
 	 */
@@ -225,7 +225,8 @@ program Estimate, eclass byable(recall)
     quietly count if `response' == 0
     if (r(N) > 0) {
       local eps_added = 1
-      quietly generate `response_eps' = `response' + `eps'
+      quietly generate double `response_eps' = `response'
+			quietly replace  `response_eps' = `response' + `eps' if `response_eps' == 0
       local response_orig = "`response'"
       local response = "`response_eps'"
     }
@@ -277,10 +278,12 @@ program Estimate, eclass byable(recall)
 	
 	/* Display results */
 	mata: __steppes__.print(strupper("`type'"), 1, 1, 1)
-  if (`eps_added') {
-    display as text "Note: the 'eps' option value has been added to the `response_orig' variable"
-    display as text "      to avoid the exclusion of times equal to zero"
-  }
+	if ("`type'" == "km") {
+		if (`eps_added') {
+			display as text "Note: the 'eps' option value has been added to the `response_orig' variable"
+			display as text "      to avoid the exclusion of times equal to zero"
+		}
+	}
 	/* End of displaying results */
 	
 	/* Return values */
@@ -303,9 +306,14 @@ program Estimate, eclass byable(recall)
 	ereturn local estat_cmd "stepp_estat"
 	ereturn local cmdline "stepp `cmdline'"
 	ereturn local cmd "stepp"
-	if (("`type'" == "km") & (`eps_added')) {
-    ereturn local responsevar "`response_orig'"
-    ereturn scalar eps = `eps'
+	if ("`type'" == "km") {
+		if (`eps_added') {
+			ereturn local responsevar "`response_orig'"
+			ereturn scalar eps = `eps'
+		}
+		else {
+			ereturn local responsevar "`response'"
+		}
   }
   else {
     ereturn local responsevar "`response'"
@@ -345,7 +353,7 @@ program Estimate, eclass byable(recall)
 	matrix colnames `trts_vec_ret' = `trts_nm'
 	ereturn matrix trts = `trts_vec_ret'
 	/* End of returning values */
-
+	
 	/* Clean up */
 	if ("`cleanup'" == "") {
 // 		capture mata: cleanup()   // all objectes are deleted apart from __steppes__

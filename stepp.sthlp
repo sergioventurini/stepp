@@ -226,7 +226,7 @@ seed number to use for making the permutation test results reproducible.
 
 {phang}{opt eps(#)}
 value added to the observed times with {opt type(km)} to avoid the exclusion
-of times equal to zero.
+of times equal to zero. default to 0.00001.
 
 
 {marker examples}{...}
