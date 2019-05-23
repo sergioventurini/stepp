@@ -222,11 +222,12 @@ program Estimate, eclass byable(recall)
     // generate a new (fake) response with eps added (used when there are times equal to zero)
     local eps_added = 0
     tempvar response_eps
-    quietly count if `response' == 0
+    quietly count if (`response' == 0) & `__touse__'
     if (r(N) > 0) {
       local eps_added = 1
-      quietly generate double `response_eps' = `response'
-			quietly replace  `response_eps' = `response' + `eps' if `response_eps' == 0
+      quietly generate double `response_eps' = `response' if `__touse__'
+			quietly replace  `response_eps' = `response' + `eps' if ///
+				(`response_eps' == 0) & `__touse__'
       local response_orig = "`response'"
       local response = "`response_eps'"
     }
