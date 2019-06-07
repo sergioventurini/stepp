@@ -35,7 +35,7 @@ E-mail: gelber@jimmy.harvard.edu
 # Acknowledgements
 Special thanks to:
 - Kristian Romano, for testing the package and checking that it works as expected
-- Wai-ki Yip, who developed the original R package, for the suggestions and insights on the STEPP procedure
+- Wai-ki Yip, who developed the [original R package](https://cran.r-project.org/web/packages/stepp/index.html), for the suggestions and insights on the STEPP procedure
 
 # Bugs
 In case you find any bug, please send us an e-mail or open an issue on GitHub.
