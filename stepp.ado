@@ -266,10 +266,9 @@ program Estimate, eclass byable(recall)
   
 	/* Generate model's subpopulations */
 	tempname stwin subp
-	mata: `stwin' = stwin_wrap("`wintype'", strtoreal("`minpatspop'"), ///
-		strtoreal("`patspop'"), strtoreal("`mineventspop'"), strtoreal("`eventspop'"), ///
-    "`winbasedon'")
 	if ("`wintype'" == "sliding_events") {
+		mata: `stwin' = stwin_wrap("`wintype'", ., ., ///
+			strtoreal("`mineventspop'"), strtoreal("`eventspop'"), "`winbasedon'")
 		if ("`failure'" == "") {
 			mata: `subp' = stsubpop_wrap(&`stwin', ///
 				st_data(., "`covsubpop'", "`__touse__'"), ///
@@ -286,6 +285,8 @@ program Estimate, eclass byable(recall)
 		}
 	}
 	else {
+		mata: `stwin' = stwin_wrap("`wintype'", strtoreal("`minpatspop'"), ///
+			strtoreal("`patspop'"), ., ., "`winbasedon'")
 		mata: `subp' = stsubpop_wrap(&`stwin', ///
 			st_data(., "`covsubpop'", "`__touse__'"))
 	}
