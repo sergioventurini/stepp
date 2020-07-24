@@ -1,5 +1,5 @@
 # stepp
-###### Current release: 0.1.0
+###### Current release: 0.2.0
 ###### Stata version required: at least 15.1
 Stata package for subpopulation treatment effect pattern plots (STEPP). The package is a porting to Stata of the [`stepp` R package](https://cran.r-project.org/web/packages/stepp/index.html).
 
@@ -20,9 +20,9 @@ The `examples.do` file contains many examples taken from the literature as well 
 **Note:** if you installed the package prior to 9 May 2019, you need to manually remove the previous installation. You can do it by deleting all the files used by `stepp` from your Stata `PERSONAL` directory.
 
 # Authors
-Sergio Venturini, Department of Decision Sciences, Università Bocconi, Milan, Italy
+Sergio Venturini, Department of Management, Università degli Studi di Torino, Turin, Italy
 
-E-mail: sergio.venturini@unibocconi.it
+E-mail: sergio.venturini@unito.it
 
 Marco Bonetti, Department of Social and Political Sciences, Università Bocconi, Milan, Italy
 
@@ -43,7 +43,7 @@ In case you find any bug, please send us an e-mail or open an issue on GitHub.
 # Citation
 You can cite the `stepp` package as:
 
-Venturini, S., Bonetti, M., Gelber, R. D. (2019). stepp: A Stata Package for Subpopulation Treatment Effect Pattern Plots (STEPP) Analysis.
+Venturini, S., Bonetti, M., Gelber, R. D. (2020). stepp: A Stata Package for Subpopulation Treatment Effect Pattern Plots (STEPP) Analysis.
 
 GitHub repository: https://github.com/sergioventurini/stepp
 

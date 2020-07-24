@@ -1,5 +1,5 @@
-*!stepp_estat version 0.3.1
-*!Written 14Feb2019
+*!stepp_estat version 0.3.2
+*!Written 25Jul2020
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -13,7 +13,7 @@ program stepp_estat, rclass
 	}
 	else {
 		// estat_default `0'
-		display as error "the `subcmd' postestimation command is not implemented for stepp"
+		display as error "the `subcmd' postestimation command is not yet implemented for stepp"
 		exit
 	}
 

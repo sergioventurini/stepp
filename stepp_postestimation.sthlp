@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0  12Feb2019}{...}
+{* *! version 0.1.0  14Feb2019}{...}
 {vieweralsosee "stepp" "help stepp"}{...}
 {vieweralsosee "steppplot" "help steppplot"}{...}
 {viewerjumpto "Postestimation commands" "stepp postestimation##description"}{...}
@@ -54,9 +54,9 @@
 {title:Authors}
 
 {pstd} Sergio Venturini{break}
-Department of Decision Sciences{break}
-Università Bocconi, Milan, Italy{break}
-{browse "mailto:sergio.venturini@unibocconi.it":sergio.venturini@unibocconi.it}{break}
+Department of Management{break}
+Università degli Studi di Torino, Turin, Italy{break}
+{browse "mailto:sergio.venturini@unito.it":sergio.venturini@unito.it}{break}
 
 {pstd} Marco Bonetti{break}
 Carlo F. Dondena Centre for Research on Social Dynamics and Public Policy{break}

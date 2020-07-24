@@ -2,8 +2,8 @@
 
   stepp.dlg
 
-*!version 0.1.0
-*!Written 22May2019
+*!version 0.2.0
+*!Written 25Jul2020
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -13,7 +13,7 @@ VERSION 15.1
 
 INCLUDE _std_large
 
-POSITION . . 500 620
+POSITION . . 500 670
 
 COPY copy1
 OK ok1, label(resource LBL_BU_OK)
@@ -68,7 +68,7 @@ BEGIN
 		label(Window type:)
 	COMBOBOX cb_wintype @ _ss 215 .,			///
 		dropdownlist                  		///					
-		contents(wintype_list)
+		contents(wintype_list) onselchange(program switch_toevents)
   TEXT tx_winbasedon       	265        90				.        .,		///
 		label(Windows are based on:)
 	COMBOBOX cb_winbasedon @ _ss 210 .,			///
@@ -76,14 +76,29 @@ BEGIN
 		contents(winbasedon_list)
 	TEXT tx_r1       	_ilft        +30				towd        .,		///
 		label(r1:)
+	TEXT tx_e1       	@        @				@        @,		///
+		label(e1:)
   SPINNER sp_r1			+25					@					100         .,		///
-		min(1)					max(c(N))			default(100)			///
+		min(1)					max(c(N))			default(5)			///
 		option(minpatspop)
-  TEXT tx_r2       	265				@					towd        .,		///
+  SPINNER sp_e1			@					@					@         @,		///
+		min(1)					max(c(N))			default(5)			///
+		option(mineventspop)
+  TEXT tx_r2       	265				140					towd        .,		///
 		label(r2:)
-  SPINNER sp_r2			+25					@					100         .,		///
-		min(1)					max(c(N))			default(50)							///
+  TEXT tx_e2       	155				140					towd        .,		///
+		label(e2:)
+  SPINNER sp_r2			290					@					100         .,		///
+		min(1)					max(c(N))			default(20)							///
 		option(patspop)
+  SPINNER sp_e2			180					@					@         @,		///
+		min(1)					max(c(N))			default(20)							///
+		option(eventspop)
+  TEXT tx_minsub       	290				140					80        .,		///
+		label(min. sub-pop.:)
+  SPINNER sp_minsub			375					@					100         @,		///
+		min(1)					max(c(N))			default(5)							///
+		option(minsubpops)
 	TEXT tx_covsubp       	_ilft        +25				.        .,		///
 		label(Covariate:)
 	VARNAME vn_covsubp		@	_ss	455	.,			///
@@ -139,7 +154,7 @@ BEGIN
 	EDIT ed_eps       	+65        @				143        .,		///
 		label(Epsilon:)	numonly		option(eps)
 
-	GROUPBOX gb_options	_lft	+45	_iwd	_ht10,			///
+	GROUPBOX gb_options	_lft	+50	_iwd	180,			///
 		label(Other options)
   TEXT tx_trtlist       	_ilft        _ss				.        .,		///
 		label(Treatment list:)
@@ -159,11 +174,18 @@ BEGIN
 		label(Do not perform the permutation test)					///
 		option("notest") 										///
 		onclickon(script turntestoff) onclickoff(script turnteston)
+  CHECKBOX ck_noshowsub	@	_ms	@	.,			///
+	label(Do not show the subpopulations summary)			///
+	option("noshowsubpops")
+  CHECKBOX ck_noshowres	@	_ms	@	.,			///
+	label(Do not show the results summary)			///
+	option("noshowresults")
 END
 
 LIST wintype_list
 BEGIN
   sliding
+  sliding_events
   tail-oriented
 END
 
@@ -250,6 +272,34 @@ BEGIN
 	}
 END
 
+PROGRAM switch_toevents
+BEGIN
+	if main.cb_wintype.iseq("sliding_events") {
+		call gaction main.tx_r1.hide
+		call gaction main.tx_e1.show
+		call gaction main.tx_r2.hide
+		call gaction main.tx_e2.show
+		call gaction main.sp_r1.hide
+		call gaction main.sp_e1.show
+		call gaction main.sp_r2.hide
+		call gaction main.sp_e2.show
+		call gaction main.tx_minsub.show
+		call gaction main.sp_minsub.show
+	}
+	if main.cb_wintype.isneq("sliding_events") {
+		call gaction main.tx_r1.show
+		call gaction main.tx_e1.hide
+		call gaction main.tx_r2.show
+		call gaction main.tx_e2.hide
+		call gaction main.sp_r1.show
+		call gaction main.sp_e1.hide
+		call gaction main.sp_r2.show
+		call gaction main.sp_e2.hide
+		call gaction main.tx_minsub.hide
+		call gaction main.sp_minsub.hide
+	}
+END
+
 SCRIPT turnteston
 BEGIN
 	main.tx_nperm.enable
@@ -287,8 +337,22 @@ BEGIN
 		if main.cb_mtype.iseq("glm (generalized linear models)") {
 			put " " /program "type(glm) "
 		}
-		optionarg main.sp_r1
-		optionarg main.sp_r2
+		if main.cb_wintype.iseq("sliding_events") {
+			put " " /program "wintype(sliding_events) "
+			optionarg main.sp_e1
+			optionarg main.sp_e2
+			optionarg main.sp_minsub
+		}
+		if main.cb_wintype.iseq("sliding") {
+			put " " /program "wintype(sliding) "
+			optionarg main.sp_r1
+			optionarg main.sp_r2
+		}
+		if main.cb_wintype.iseq("tail-oriented") {
+			put " " /program "wintype(tail-oriented) "
+			optionarg main.sp_r1
+			optionarg main.sp_r2
+		}
 		optionarg main.ed_trtlist
 		optionarg main.vn_covsubp
 		optionarg main.ed_timepoint
@@ -310,6 +374,12 @@ BEGIN
 		}
 		else {
 			option main.ck_notest
+		}
+		if main.ck_noshowsub {
+			option main.ck_noshowsub
+		}
+		if main.ck_noshowres {
+			option main.ck_noshowres
 		}
 	endoptions
 	

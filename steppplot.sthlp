@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0  12Feb2019}{...}
+{* *! version 0.1.0  14Feb2019}{...}
 {vieweralsosee "stepp" "help stepp"}{...}
 {vieweralsosee "stepp postestimation" "help stepp postestimation"}{...}
 {viewerjumpto "Syntax" "steppplot##syntax"}{...}
@@ -24,17 +24,20 @@
 {synopthdr}
 {synoptline}
 {synopt:{cmdab:s:ubpop}}plot the generated subpopulations{p_end}
-{synopt:{cmdab:t:reteff}}plot the measurement (outer) model relationships (not yet implemented){p_end}
-{synopt:{cmdab:d:iff}}plot the difference of the treatment effect estimates{p_end}
+{synopt:{cmdab:t:reteff}}plot the estimated treatment effects{p_end}
+{synopt:{cmdab:d:iff}}plot the difference between the estimated treatment effects estimates{p_end}
 {synopt:{cmdab:r:atio}}plot the ratio estimates between any treatment and treatment 1{p_end}
 {synopt:{cmdab:a:ll}}produce all the available grpahs{p_end}
 {synopt:{cmdab:c:onf(#)}}set the confidence level to use in the graphs; default is 95{p_end}
 {synopt:{cmdab:point:wise}}plot the pointwise confidence intervals instead of the
 confidence bands{p_end}
 {synopt:{cmdab:nopop:size}}do not plot the subpopulation sizes along the horizontal axis{p_end}
-{synopt:{opth trt:labs(numlist)}}optional treatment names{p_end}
+{synopt:{opth trt:labs(numlist)}}treatment names (optional){p_end}
 {synopt:{cmdab:x:title(}{it:axis_title}{cmd:)}}specify {it:x} axis title{p_end}
 {synopt:{cmdab:y:title(}{it:axis_title}{cmd:)}}specify {it:y} axis title{p_end}
+{synopt:{opth tysc:ale(numlist)}}y axis scale for the treatment effects plot (optional){p_end}
+{synopt:{opth dysc:ale(numlist)}}y axis scale for the treatment effects difference plot (optional){p_end}
+{synopt:{opth rysc:ale(numlist)}}y axis scale for the ratio estimates plot (optional){p_end}
 {synoptline}
 
 {marker description}{...}
@@ -114,9 +117,9 @@ a STEPP analysis.
 {title:Authors}
 
 {pstd} Sergio Venturini{break}
-Department of Decision Sciences{break}
-Università Bocconi, Milan, Italy{break}
-{browse "mailto:sergio.venturini@unibocconi.it":sergio.venturini@unibocconi.it}{break}
+Department of Management{break}
+Università degli Studi di Torino, Turin, Italy{break}
+{browse "mailto:sergio.venturini@unito.it":sergio.venturini@unito.it}{break}
 
 {pstd} Marco Bonetti{break}
 Carlo F. Dondena Centre for Research on Social Dynamics and Public Policy{break}

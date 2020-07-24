@@ -1,5 +1,5 @@
-*!stepp version 0.1.0
-*!Written 22May2019
+*!stepp version 0.2.0
+*!Written 25Jul2020
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -45,30 +45,41 @@ end
 program Estimate, eclass byable(recall)
 	version 15.1
 	syntax varlist(min=2 max=2 numeric) [if] [in], ///
-		TYpe(string) PATspop(numlist integer >0 max=1) ///
-		MINPatspop(numlist integer >0 max=1) TRts(numlist integer ascending min=2) ///
+		TYpe(string) TRts(numlist integer ascending min=2) ///
 		COVSubpop(varname numeric) [ WINType(string) WINBasedon(string) ///
+		PATspop(numlist integer >0 max=1) MINPatspop(numlist integer >0 max=1) ///
+		EVENTspop(numlist integer >0 max=1) ///
+    MINEVentspop(numlist integer >0 max=1) ///
+		MINSubpops(numlist integer >0 max=1) ///
 		Failure(varname numeric) COMPrisk(varname numeric) COVariates(varlist) ///
 		TImepoint(numlist >0 max=1) FAmily(string) Link(string) noCONStant ///
 		noTEst NPerm(numlist integer >0 max=1) Seed(numlist integer >0 max=1) ///
-		Eps(real 0.00001) noCLeanup ]
+		Eps(real 0.00001) noSHOWSubpops noSHOWResults noCLeanup ]
 	
 	/* Options:
 	   --------
 		 varlist							--> variables list to analyze providing the response
 															and the treatment indicator
 		 type(string)					--> model type (either 'km', 'ci' or 'glm')
+		 trts(numlist integer min=2)
+													--> treatments list
+		 covsubpop(varname numeric)
+													--> covariate to use for generating the subpopulations
+		 wintype(string)			--> window type (either 'sliding', 'sliding_events' or
+                              'tail-oriented')
+		 winbasedon(string)		--> what window is based on (either 'all' or 'event')
 		 patspop(numlist integer >0 max=1)
 													--> number of patients in each subpopulation (r2)
 		 minpatspop(numlist integer >0 max=1)
 													--> largest number of patients in common among
 															consecutive subpopulations (r1)
-		 trts(numlist integer min=2)
-													--> treatments list
-		 covsubpop(varname numeric)
-													--> covariate to use for generating the subpopulations
-		 wintype(string)			--> window type (either 'sliding' or 'tail-oriented')
-		 winbasedon(string)		--> what window is based on (either 'all' or 'event')
+     eventspop(numlist integer >0 max=1)
+                          --> number of events in each subpopulation (e2)
+     mineventspop(numlist integer >0 max=1)
+                          --> largest number of events in common among
+                              consecutive subpopulations (e1)
+		 minsubpops(numlist integer >0 max=1)
+                          --> minimum number of subpopulations
 		 failure(varname numeric)
 													--> censoring variable (to use with type = "km")
 		 comprisk(varname numeric)
@@ -90,6 +101,8 @@ program Estimate, eclass byable(recall)
 		 seed(numlist integer >0 max=1)
 													--> random seed
      eps(real 0.00001)    --> small value to add to zero times when (type == "km")
+		 noshowsubpops				--> do not show the subpopulations summary
+		 noshowresults				--> do not show the result summary
 		 nocleanup						--> Mata temporary objects are not removed
 															(undocumented)
 	 */
@@ -150,12 +163,29 @@ program Estimate, eclass byable(recall)
 	/* Parse window attributes */
 	if ("`wintype'" == "") local wintype = "sliding"
 	if ("`winbasedon'" == "") local winbasedon = "all"
-	if !("`wintype'" == "sliding" | "`wintype'" == "tail-oriented" ) {
-		display as error "window type can only be set to 'sliding' or 'tail-oriented'"
+	if !("`wintype'" == "sliding" | "`wintype'" == "sliding_events" | ///
+    "`wintype'" == "tail-oriented") {
+		display as error "window type can only be set to 'sliding', 'sliding_events' " _continue
+    display as error "or 'tail-oriented'"
 		exit
 	}
-	if !("`winbasedon'" == "all" | "`winbasedon'" == "event" ) {
+	if ("`wintype'" == "sliding_events") {
+		if ("`comprisk'" == "" & "`failure'" == "") {
+			display as error "when window type is set to 'sliding_events' it is " _continue
+			display as error "mandatory to provide either the 'failure' or 'comprisk' option"
+			exit
+		}
+		if ("`minsubpops'" == "") {
+			local minsubpops 5
+		}
+	}
+	if !("`winbasedon'" == "all" | "`winbasedon'" == "event") {
 		display as error "window based-on attribute can only be set to 'all' or 'event'"
+		exit
+	}
+	if ("`type'" == "glm" & "`wintype'" == "sliding_events") {
+		display as error "the 'glm' model type is not allowed with " _continue
+		display as error "event-based generated subpopulations"
 		exit
 	}
 	/* End parsing window attributes */
@@ -237,8 +267,28 @@ program Estimate, eclass byable(recall)
 	/* Generate model's subpopulations */
 	tempname stwin subp
 	mata: `stwin' = stwin_wrap("`wintype'", strtoreal("`minpatspop'"), ///
-		strtoreal("`patspop'"), "`winbasedon'")
-	mata: `subp' = stsubpop_wrap(&`stwin', st_data(., "`covsubpop'", "`__touse__'"))
+		strtoreal("`patspop'"), strtoreal("`mineventspop'"), strtoreal("`eventspop'"), ///
+    "`winbasedon'")
+	if ("`wintype'" == "sliding_events") {
+		if ("`failure'" == "") {
+			mata: `subp' = stsubpop_wrap(&`stwin', ///
+				st_data(., "`covsubpop'", "`__touse__'"), ///
+				st_data(., "`comprisk'", "`__touse__'"), ///
+				st_data(., "`trt'", "`__touse__'"), ///
+				`trts_vec', strtoreal("`minsubpops'"))
+		}
+		else if ("`comprisk'" == "") {
+			mata: `subp' = stsubpop_wrap(&`stwin', ///
+				st_data(., "`covsubpop'", "`__touse__'"), ///
+				st_data(., "`failure'", "`__touse__'"), ///
+				st_data(., "`trt'", "`__touse__'"), ///
+				`trts_vec', strtoreal("`minsubpops'"))
+		}
+	}
+	else {
+		mata: `subp' = stsubpop_wrap(&`stwin', ///
+			st_data(., "`covsubpop'", "`__touse__'"))
+	}
 	/* End of generating model's subpopulations */
 
 	/* Get model's estimates */
@@ -278,11 +328,16 @@ program Estimate, eclass byable(recall)
 	/* End of performing permutation test */
 	
 	/* Display results */
-	mata: __steppes__.print(strupper("`type'"), 1, 1, 1)
-	if ("`type'" == "km") {
-		if (`eps_added') {
-			display as text "Note: the 'eps' option value has been added to the `response_orig' variable"
-			display as text "      to avoid the exclusion of times equal to zero"
+	if ("`showsubpops'" == "") {
+		mata: `subp'.summary()
+	}
+	if ("`showresults'" == "") {
+		mata: __steppes__.print(strupper("`type'"), 1, 1, 1)
+		if ("`type'" == "km") {
+			if (`eps_added') {
+				display as text "Note: the 'eps' option value has been added to the `response_orig' variable"
+				display as text "      to avoid the exclusion of times equal to zero"
+			}
 		}
 	}
 	/* End of displaying results */
@@ -298,8 +353,15 @@ program Estimate, eclass byable(recall)
 	if ("`type'" != "glm") {
 		ereturn scalar timepoint = `timepoint'
 	}
-	ereturn scalar r1 = `minpatspop'
-	ereturn scalar r2 = `patspop'
+	if ("`wintype'" == "sliding_events") {
+		ereturn scalar e1 = `mineventspop'
+		ereturn scalar e2 = `eventspop'
+		ereturn scalar minsubpops = `minsubpops'
+	}
+	else {
+		ereturn scalar r1 = `minpatspop'
+		ereturn scalar r2 = `patspop'
+	}
 	mata: st_numscalar("e(nsubpop)", __steppes__.subpop->nsubpop)
 	mata: st_numscalar("e(ntrts)", `ntrts')
 

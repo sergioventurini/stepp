@@ -2,8 +2,8 @@
 
   steppplot.dlg
 
-*!version 0.1.0
-*!Written 12Feb2019
+*!version 0.2.0
+*!Written 25Jul2020
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -13,7 +13,7 @@ VERSION 15.1
 
 INCLUDE _std_large
 
-POSITION . . 500 420
+POSITION . . 500 540
 
 COPY copy1
 OK ok1, label(resource LBL_BU_OK)
@@ -45,7 +45,7 @@ BEGIN
   DEFINE _cx _spr2b
   DEFINE _y _top
 
-	FRAME fr_all _x _y 480 400
+	FRAME fr_all _x _y 480 520
 	
   COMBOBOX  sp_level	+20	+20	_spwd	.,		///
 	dropdown						///
@@ -88,6 +88,21 @@ BEGIN
 	EDIT ed_ytitle       	@        _ss				440        .,		///
 		label(Y axis title:)	option(ytitle)
 
+  TEXT tx_tyscale      	30        +35				530        .,		///
+		label(Treatment effects plot vertical scale:)
+	EDIT ed_tyscale       	@        _ss				440        .,		///
+		label(Treatment effects plot vertical scale:)	option(tyscale)
+	
+  TEXT tx_dyscale      	30        +35				530        .,		///
+		label(Difference in treatment effects vertical scale:)
+	EDIT ed_dyscale       	@        _ss				440        .,		///
+		label(Difference in treatment effects vertical scale:)	option(dyscale)
+	
+  TEXT tx_ryscale      	30        +35				530        .,		///
+		label(Ratio of treatment effects vertical scale:)
+	EDIT ed_ryscale       	@        _ss				440        .,		///
+		label(Ratio of treatment effects vertical scale:)	option(ryscale)
+	
 	CHECKBOX ck_nopopsize	30			+35					.						.,			///
 		label(Do not plot subpopulation sizes along the X axis)					///
 		option("nopopsize")
@@ -108,6 +123,9 @@ BEGIN
 			optionarg /asis main.ed_trtlabs
 			optionarg /oquoted main.ed_xtitle
 			optionarg /oquoted main.ed_ytitle
+			optionarg /asis main.ed_tyscale
+			optionarg /asis main.ed_dyscale
+			optionarg /asis main.ed_ryscale
 		endoptions
 	}
 END

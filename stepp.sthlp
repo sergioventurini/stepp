@@ -24,9 +24,10 @@ data using Kaplan-Meier method
 
 {p 8 14 8}
 {cmd:stepp} {it:{help varname:responsevar}} {it:{help varname:trtvar}}
-{ifin}{cmd:,} {cmdab:ty:pe(km)} {opt pat:spop(#)} {opt minp:atspop(#)}
-{opth tr:ts(numlist)} {opth covs:ubpop(varname)} {opth fail:ure(varname)}
-{opt ti:mepoint(#)} [{it:{help stepp##steppopts:options}}]
+{ifin}{cmd:,} {cmdab:ty:pe(km)} {opth tr:ts(numlist)} {opth covs:ubpop(varname)}
+{opth fail:ure(varname)} {opt ti:mepoint(#)} [{opt pat:spop(#)}
+{opt minp:atspop(#)} {opt event:spop(#)} {opt minev:entspop(#)}
+{opt mins:ubpops(#)} {it:{help stepp##steppopts:options}}]
 
 
 {pstd}
@@ -35,9 +36,10 @@ data using cumulative incidence method
 
 {p 8 14 8}
 {cmd:stepp} {it:{help varname:responsevar}} {it:{help varname:trtvar}}
-{ifin}{cmd:,} {cmdab:ty:pe(ci)} {opt pat:spop(#)} {opt minp:atspop(#)}
-{opth tr:ts(numlist)} {opth covs:ubpop(varname)} {opth comp:risk(varname)}
-{opt ti:mepoint(#)} [{it:{help stepp##steppopts:options}}]
+{ifin}{cmd:,} {cmdab:ty:pe(ci)} {opth tr:ts(numlist)} {opth covs:ubpop(varname)}
+{opth comp:risk(varname)} {opt ti:mepoint(#)} [{opt pat:spop(#)}
+{opt minp:atspop(#)} {opt event:spop(#)} {opt minev:entspop(#)}
+{opt mins:ubpops(#)} {it:{help stepp##steppopts:options}}]
 
 
 {pstd}
@@ -46,12 +48,13 @@ binary and count outcomes
 
 {p 8 14 8}
 {cmd:stepp} {it:{help varname:responsevar}} {it:{help varname:trtvar}}
-{ifin}{cmd:,} {cmdab:ty:pe(glm)} {opt pat:spop(#)} {opt minp:atspop(#)}
-{opth tr:ts(numlist)} {opth covs:ubpop(varname)}
+{ifin}{cmd:,} {cmdab:ty:pe(glm)} {opt pat:spop(#)} {opth covs:ubpop(varname)}
 {cmdab:fa:mily(}{it:glmfamily}{cmd:)} {cmdab:l:ink(}{it:glmlink}{cmd:)}
-[{it:{help stepp##steppopts:options}}]
+[{opt pat:spop(#)} {opt minp:atspop(#)} {opt event:spop(#)}
+{opt minev:entspop(#)} {opt mins:ubpops(#)}
+{it:{help stepp##steppopts:options}}]
 
-{synoptset 23 tabbed}{...}
+{synoptset 25 tabbed}{...}
 {marker steppopts}{...}
 {synopthdr}
 {synoptline}
@@ -62,10 +65,19 @@ binary and count outcomes
 in the literature){p_end}
 {synopt:{opt min:patspop(#)}}largest number of patients in common among
 consecutive subpopulations (called r1 in the literature){p_end}
+{synopt:{opt event:spop(#)}}number of events in each subpopulation (called e2
+in the literature; only relevant for event-based windows){p_end}
+{synopt:{opt minev:entspop(#)}}largest number of events in common among
+consecutive subpopulations (called e1 in the literature; only relevant
+for event-based windows){p_end}
+{synopt:{opt mins:ubpops(#)}}minimum number of subpopulations (only relevant
+for event-based windows){p_end}
 {synopt:{opth tr:ts(numlist)}}list of treatments included in {it:trtvar}{p_end}
 {synopt:{opth covs:ubpop(varname)}}variable to use for generating the subpopulations{p_end}
 {synopt:{cmdab:wint:ype(sliding)}}use the sliding window method for generating the
 subpopulations; the default{p_end}
+{synopt:{cmdab:wint:ype(sliding_events)}}use the event-based sliding window
+method for generating the subpopulations{p_end}
 {synopt:{cmdab:wint:ype(tail-oriented)}}use the tail-oriented window method for
 generating the subpopulations{p_end}
 {synopt:{cmdab:winb:asedon(all)}}use all observations for generating the
@@ -99,13 +111,16 @@ to use with {cmdab:type(glm)}{p_end}
 {synopt:{opt np:erm(#)}}number of replications to use in the permutation test{p_end}
 {synopt:{opt s:eed(#)}}seed number{p_end}
 {synopt:{opt e:ps(#)}}value used in case of times equal to zero{p_end}
+{synopt:{cmdab:noshows:ubpops}}suppress the summary of the generated
+subpopulations test{p_end}
+{synopt:{cmdab:noshowr:esults}}suppress the summary of the results{p_end}
 {synoptline}
 
 {p 4 6 2}
 {cmd:by} is allowed with {cmd:stepp}; see {help prefix}.
 
 {p 4 6 2}
-See {helpb stepp_postestimation:stepp postestimation} and {helpb steppplot:steppplot} for features available after estimation.{p_end}
+See {helpb steppplot:steppplot} for features available after estimation.{p_end}
 
 
 {marker description}{...}
@@ -123,7 +138,7 @@ Pattern Plot. STEPP uses a permutation based approach for inference.
 without invoking the permutation analysis by specifying the {opt notest} option.
 In this case, p-values and covariance matrices will not be produced.
 
-{pstd} STEPP is an exploratory tool, with graphical features that make it easy
+{pstd} STEPP is an exploratory tool with graphical features that make it easy
 for clinicians to interpret the results of the analysis. Positive results should
 prompt the need for confirmation from other datasets investigating similar
 treatment comparisons. Note also that STEPP is not meant to estimate specific
@@ -132,18 +147,26 @@ provide some indication on ranges of values where treatment effect might have
 a particular behavior.
 
 {pstd} STEPP considers the case in which the subpopulations are constructed
-according to a sliding window pattern. The larger parameter ({opt patspop})
-determines how many patients are included in each subpopulation, and the smaller
-parameter ({opt minpatspop}) determines the largest number of patients in common
-among consecutive subpopulations. A minimum of 80-100 patients should be included
-in each subpopulation, but that is not strictly necessary. The difference
-({opt patspop} - {opt minpatspop}) is the approximate number of patients replaced between
-any two subsequent subpopulations, and can be used to determine the number of
-subpopulations once {opt patspop} is fixed. The choice of the values of the
-parameters {opt patspop} and {opt minpatspop} to be used does change the appearance
-of the plot and the corresponding p-value. It is reasonable to experiment with a
+according to a sliding window pattern ({opt wintype(sliding)}). The larger
+parameter ({opt patspop}) determines how many patients are included in each
+subpopulation, and the smaller parameter ({opt minpatspop}) determines the
+largest number of patients in common among consecutive subpopulations. A
+minimum of 80-100 patients should be included in each subpopulation, but that
+is not strictly necessary. The difference ({opt patspop} - {opt minpatspop}) is
+the approximate number of patients replaced between any two subsequent
+subpopulations, and can be used to determine the number of subpopulations once
+{opt patspop} is fixed. The choice of the values of the parameters
+{opt patspop} and {opt minpatspop} to be used does change the appearance of the
+plot and the corresponding p-value. It is reasonable to experiment with a
 few combinations to ensure that the significance (or lack of significance) is
 stable with respect to that choice.
+
+{pstd} A further possibility is to generate the subpopulations still according
+to a sliding window pattern but guaranteeing that they contain a given number of
+events ({opt wintype(sliding_events)}). The larger parameter ({opt eventspop})
+determines how many events are included in each subpopulation, and the smaller
+parameter ({opt mineventspop}) determines the largest number of events in
+common among consecutive subpopulations.
 
 {pstd} For best results, consider implementing 2500 permutations of the
 covariate (vector of subpopulations) to obtain a detailed distribution to use
@@ -151,7 +174,8 @@ for drawing inference.
 
 {pstd} For more details about the method see {help stepp##BonettiGelber2004:Bonetti & Gelber (2004)},
 {help stepp##Bonettietal2009:Bonetti et al. (2009)},
-{help stepp##Lazaretal2010:Lazar et al. (2010)} and {help stepp##Yipetal2016:Yip et al. (2016)}. 
+{help stepp##Lazaretal2010:Lazar et al. (2010)}, {help stepp##Lazaretal2016:Lazar et al. (2016)} 
+and {help stepp##Yipetal2016:Yip et al. (2016)}.
 
 
 {marker options}{...}
@@ -167,7 +191,19 @@ referred to as r2 in the literature).
 
 {phang}{opt minpatspop(#)}
 indicates the number of patients to include in each subpopulation (usually
-referred to as r2 in the literature).
+referred to as r1 in the literature).
+
+{phang}{opt eventspop(#)}
+indicates the number of events to include in each subpopulation (usually
+referred to as e2 in the literature; only relevant for event-based windows).
+
+{phang}{opt mineventspop(#)}
+indicates the number of events to include in each subpopulation (usually
+referred to as e1 in the literature; only relevant for event-based windows).
+
+{phang}{opt minsubpops(#)}
+indicates the minimum number of subpopulations to generate (only relevant for
+event-based windows). default to 5.
 
 {phang}{opth trts(numlist)}
 provides the list of treatments included in the treatment indicator {it:trtvar}.
@@ -178,7 +214,7 @@ covariate variable to use for generating the subpopulations.
 
 {phang}{opt wintype(windows_type)}
 sets the type of the windows to use for generating the subpopulations.
-Alternative choices are {bf:sliding} (default) or {bf:tail-oriented}. See the
+Alternative choices are {bf:sliding} (default), {bf:sliding_events} or {bf:tail-oriented}. See the
 references for further details.
 
 {phang}{opt winbasedon(windows_basedon)}
@@ -217,6 +253,12 @@ suppresses the constant term when {cmdab:type(glm)} is used.
 {phang}{opt notest}
 suppresses the permutation test. If provided, p-values and covariance matrices
 will not be produced.
+ 
+{phang}{opt noshowsubpops}
+suppresses the subpopulations summary.
+ 
+{phang}{opt noshowresults}
+suppresses the results summary.
  
 {phang}{opt nperm(#)}
 number of permutation replications to use in the test.
@@ -267,15 +309,25 @@ of times equal to zero. default to 0.00001.
 {pstd}Graphical analysis{p_end}
 {phang2}{cmd:. steppplot, all conf(95) trtlabs(1 "Placebo" 2 "81 mg aspirin") xtitle("Subpopulations by median age") ytitle(Risk) nopop}{p_end}
     {hline}
+{pstd}{it:Cumulative incidence method (event-based)}{p_end}
+{pstd}Setup{p_end}
+{phang2}{cmd:. sysuse bigKM, clear}{p_end}
+
+{pstd}Model estimation{p_end}
+{phang2}{cmd:. stepp time trt, covsubpop(ki67) comprisk(event) type(ci) eventspop(20) mineventspop(10) trts(1 2) timepoint(4) nperm(250) wintype("sliding_events") minsubpops(5)}{p_end}
+
+{pstd}Graphical analysis{p_end}
+{phang2}{cmd:. steppplot, all conf(95) tyscale(-13 29) dyscale(-35 35) ryscale(-1 3.2)}{p_end}
+    {hline}
 
 
 {marker authors}{...}
 {title:Authors}
 
 {pstd} Sergio Venturini{break}
-Department of Decision Sciences{break}
-Università Bocconi, Milan, Italy{break}
-{browse "mailto:sergio.venturini@unibocconi.it":sergio.venturini@unibocconi.it}{break}
+Department of Management{break}
+Università degli Studi di Torino, Turin, Italy{break}
+{browse "mailto:sergio.venturini@unito.it":sergio.venturini@unito.it}{break}
 
 {pstd} Marco Bonetti{break}
 Carlo F. Dondena Centre for Research on Social Dynamics and Public Policy{break}
@@ -304,6 +356,12 @@ when {opt type(km)} or {opt type(ci)} are chosen{p_end}
 {synopt:{cmd:e(r1)}}largest number of patients in common among consecutive
 subpopulations{p_end}
 {synopt:{cmd:e(r2)}}number of patients in each subpopulation{p_end}
+{synopt:{cmd:e(e1)}}largest number of events in common among consecutive
+subpopulations (only relevant for event-based windows){p_end}
+{synopt:{cmd:e(e2)}}number of events in each subpopulation (only relevant for
+event-based windows){p_end}
+{synopt:{cmd:e(minsubpops)}}minimum number of subpopulations (only relevant for
+event-based windows){p_end}
 {synopt:{cmd:e(ntrts)}}number of treatments considered{p_end}
 {synopt:{cmd:e(eps)}}value added to the response in case of times equal to zero{p_end}
 {synopt:{cmd:e(nsubpop)}}number of subpopulations generated{p_end}
@@ -387,21 +445,27 @@ the hazard ratio{p_end}
 
 {marker BonettiGelber2004}{...}
 {phang}
-Bonetti, M., and Gelber, R .D. 2004. Patterns of treatment effects in subsets of
+Bonetti, M. and Gelber, R .D. 2004. Patterns of treatment effects in subsets of
 patients in clinical trials. Biostatistics, 5(3):465-481.
 
 {marker Bonettietal2009}{...}
 {phang}
-Bonetti, M., Zahrieh, D., Cole, B. F., and Gelber, R .D. 2009. A small sample
+Bonetti, M., Zahrieh, D., Cole, B. F. and Gelber, R .D. 2009. A small sample
 study of the STEPP approach to assessing treatment-covariate interactions in
 survival data. Statistics in Medicine, 28(8):1255-68.
 
 {marker Lazaretal2010}{...}
 {phang}
-Lazar, A. A., Cole, B. F., Bonetti, M., and Gelber, R .D. 2010. Evaluation of
+Lazar, A. A., Cole, B. F., Bonetti, M. and Gelber, R .D. 2010. Evaluation of
 treatment-effect heterogeneity using biomarkers measured on a continuous scale:
 subpopulation treatment effect pattern plot. Journal of Clinical Oncology,
 28(29):4539-4544.
+
+{marker Lazaretal2016}{...}
+{phang}
+Lazar, A. A., Bonetti, M., Cole, B. F., Yip, W.-K. and Gelber, R .D. 2016.
+Identifying treatment effect heterogeneity in clinical trials using
+subpopulations of events: STEPP. Clinical Trials, 13(2):169–179.
 
 {marker Yipetal2016}{...}
 {phang}

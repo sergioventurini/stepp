@@ -1,5 +1,5 @@
-*!steppplot version 0.3.0
-*!Written 14Feb2019
+*!steppplot version 0.4.0
+*!Written 25Jul2020
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -27,7 +27,10 @@ end
 
 program _steppplot
 	syntax [ , Subpop Trteff Diff Ratio All Conf(numlist >0 <100 min=1 max=1) ///
-		Pointwise noPOPsize TRTlabs(string asis) Xtitle(string) Ytitle(string) ]
+		Pointwise noPOPsize TRTlabs(string asis) Xtitle(string) Ytitle(string) ///
+		TYSCale(numlist ascending min=1 max=2) ///
+		DYSCale(numlist ascending min=1 max=2) ///
+		RYSCale(numlist ascending min=1 max=2) ]
 	
 	gettoken subcmd rest : 0 , parse(", ")
 
@@ -43,6 +46,7 @@ program _steppplot
 	local notest "notest"
 	local isnotest : list notest in props
 	local dq `"""'
+	local nsteps 7
 	
 	if ("`conf'" != "") {
 		local conf = `conf'/100
@@ -153,6 +157,21 @@ program _steppplot
 		local allpattern ""
 		local alllabels ""
 		local allorder ""
+		if ("`tyscale'" != "") {
+			tokenize "`tyscale'"
+			local ymin `1'
+			local ymax `2'
+			local ystep = (`ymax' - `ymin')/`nsteps'
+			local ysc_tmp = strofreal(`ymin', "%9.1f")
+			forvalues j = 1/`nsteps' {
+				local yscrange `"`yscrange' `ysc_tmp'"'
+				local ysc_tmp = strofreal(`ysc_tmp' + `ystep', "%9.1f")
+			}
+			local yscrange `"`yscrange' `ysc_tmp'"'
+		}
+		else {
+			local ymin 0
+		}
 
 		preserve
 
@@ -197,7 +216,7 @@ program _steppplot
 			local xlabs "`xlabs' `xlabi'"
 			local sizei = strofreal(`npatsub'[`i', 1])
 			local npatsubi `"(n=`sizei')"'
-			local xannot `"`xannot' 0 `xlabi' `"`npatsubi'"'"'
+			local xannot `"`xannot' `ymin' `xlabi' `"`npatsubi'"'"'
 		}
 		
 		tempname trteff_plot
@@ -208,14 +227,27 @@ program _steppplot
 			local xtitle "Subpopulations by median covariate"
 		}
 		if ("`popsize'" != "") local xannot ""
-		twoway scatter `allnames' `xvalues', ylabel(0(20)100) xlabel(`xlabs') ///
-			ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
-			connect(`allconnect') legend(`legend') lpattern(`pstyle') ///
-			lwidth(`lwidth') lcolor(`lcol') mcolor(`lcol') mfcolor(`lcol') ///
-			mlcolor(`lcol') scheme(sj) ///
-			text(`xannot', orientation(vertical) size(small) placement(north) ///
-			justification(center) alignment(top)) note("`st_pvalue'") ///
-			name(`trteff_plot', replace)
+		if ("`tyscale'" == "") {
+			twoway scatter `allnames' `xvalues', ylabel(0(20)100) xlabel(`xlabs') ///
+				ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
+				connect(`allconnect') legend(`legend') lpattern(`pstyle') ///
+				lwidth(`lwidth') lcolor(`lcol') mcolor(`lcol') mfcolor(`lcol') ///
+				mlcolor(`lcol') scheme(sj) ///
+				text(`xannot', orientation(vertical) size(small) placement(north) ///
+				justification(center) alignment(top)) note("`st_pvalue'") ///
+				name(`trteff_plot', replace)
+			}
+			else {
+				twoway scatter `allnames' `xvalues', ylabel(0(20)100) xlabel(`xlabs') ///
+					ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
+					connect(`allconnect') legend(`legend') lpattern(`pstyle') ///
+					lwidth(`lwidth') lcolor(`lcol') mcolor(`lcol') mfcolor(`lcol') ///
+					mlcolor(`lcol') scheme(sj) ///
+					text(`xannot', orientation(vertical) size(small) placement(north) ///
+					justification(center) alignment(top)) note("`st_pvalue'") ///
+					yline(0, lwidth(thin)) name(`trteff_plot', replace) ///
+					ylabel("`yscrange'") yscale(range(`ymin' `ymax'))
+			}
 		
 		restore
 	}
@@ -238,6 +270,22 @@ program _steppplot
 		local allpattern ""
 		local alllabels ""
 		local allorder ""
+		local yscrange ""
+		if ("`dyscale'" != "") {
+			tokenize "`dyscale'"
+			local ymin `1'
+			local ymax `2'
+			local ystep = (`ymax' - `ymin')/`nsteps'
+			local ysc_tmp = strofreal(`ymin', "%9.1f")
+			forvalues j = 1/`nsteps' {
+				local yscrange `"`yscrange' `ysc_tmp'"'
+				local ysc_tmp = strofreal(`ysc_tmp' + `ystep', "%9.1f")
+			}
+			local yscrange `"`yscrange' `ysc_tmp'"'
+		}
+		else {
+			local ymin -100
+		}
 
 		preserve
 
@@ -325,7 +373,7 @@ program _steppplot
 			local xlabs "`xlabs' `xlabi'"
 			local sizei = strofreal(`npatsub'[`i', 1])
 			local npatsubi `"(n=`sizei')"'
-			local xannot `"`xannot' -100 `xlabi' `"`npatsubi'"'"'
+			local xannot `"`xannot' `ymin' `xlabi' `"`npatsubi'"'"'
 		}
 		
 		tempname diff_plot
@@ -339,15 +387,29 @@ program _steppplot
 			local xtitle "Subpopulations by median covariate"
 		}
 		if ("`popsize'" != "") local xannot ""
-		twoway scatter `allnames' `xvalues', ylabel(-100(20)100) xlabel(`xlabs') ///
-			ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
-			connect(`allconnect') legend(`alllabels' order(`allorder')) ///
-			lpattern(`allpattern') lwidth(`allwidth') lcolor(`allcolor') ///
-			mcolor(`allcolor') mfcolor(`allcolor') mlcolor(`allcolor') ///
-			msymbol(`allmarker') scheme(sj) ///
-			text(`xannot', orientation(vertical) size(small) placement(north) ///
-			justification(center) alignment(top)) note("`st_pvalue'") ///
-			yline(0, lwidth(thin)) name(`diff_plot', replace)
+		if ("`dyscale'" == "") {
+			twoway scatter `allnames' `xvalues', ylabel(-100(20)100) xlabel(`xlabs') ///
+				ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
+				connect(`allconnect') legend(`alllabels' order(`allorder')) ///
+				lpattern(`allpattern') lwidth(`allwidth') lcolor(`allcolor') ///
+				mcolor(`allcolor') mfcolor(`allcolor') mlcolor(`allcolor') ///
+				msymbol(`allmarker') scheme(sj) ///
+				text(`xannot', orientation(vertical) size(small) placement(north) ///
+				justification(center) alignment(top)) note("`st_pvalue'") ///
+				yline(0, lwidth(thin)) name(`diff_plot', replace)
+		}
+		else {
+			twoway scatter `allnames' `xvalues', ylabel(-100(20)100) xlabel(`xlabs') ///
+				ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
+				connect(`allconnect') legend(`alllabels' order(`allorder')) ///
+				lpattern(`allpattern') lwidth(`allwidth') lcolor(`allcolor') ///
+				mcolor(`allcolor') mfcolor(`allcolor') mlcolor(`allcolor') ///
+				msymbol(`allmarker') scheme(sj) ///
+				text(`xannot', orientation(vertical) size(small) placement(north) ///
+				justification(center) alignment(top)) note("`st_pvalue'") ///
+				yline(0, lwidth(thin)) name(`diff_plot', replace) ///
+				ylabel("`yscrange'") yscale(range(`ymin' `ymax'))
+			}
 		
 		restore
 	}
@@ -370,7 +432,22 @@ program _steppplot
 		local allpattern ""
 		local alllabels ""
 		local allorder ""
-
+		local yscrange ""
+		if ("`ryscale'" != "") {
+			tokenize "`ryscale'"
+			local ymin `1'
+			local ymax `2'
+			local ystep = (`ymax' - `ymin')/`nsteps'
+			local ysc_tmp = strofreal(`ymin', "%9.1f")
+			forvalues j = 1/`nsteps' {
+				local yscrange `"`yscrange' `ysc_tmp'"'
+				local ysc_tmp = strofreal(`ysc_tmp' + `ystep', "%9.1f")
+			}
+			local yscrange `"`yscrange' `ysc_tmp'"'
+		}
+		else {
+			local ymin 0
+		}
 		preserve
 
 		quietly drop _all
@@ -453,7 +530,7 @@ program _steppplot
 			local xlabs "`xlabs' `xlabi'"
 			local sizei = strofreal(`npatsub'[`i', 1])
 			local npatsubi `"(n=`sizei')"'
-			local xannot `"`xannot' 0 `xlabi' `"`npatsubi'"'"'
+			local xannot `"`xannot' `ymin' `xlabi' `"`npatsubi'"'"'
 		}
 		
 		tempname ratio_plot maxHR
@@ -481,15 +558,29 @@ program _steppplot
 		}
 		mata: st_local("yrange", invtokens(strofreal(pretty((0 \ vec(`HRU_tmp')), 7))'))
 		if ("`popsize'" != "") local xannot ""
-		twoway scatter `allnames' `xvalues', ylabel(`yrange') xlabel(`xlabs') ///
-			ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
-			connect(`allconnect') legend(`alllabels' order(`allorder')) ///
-			lpattern(`allpattern') lwidth(`allwidth') lcolor(`allcolor') ///
-			mcolor(`allcolor') mfcolor(`allcolor') mlcolor(`allcolor') ///
-			msymbol(`allmarker') scheme(sj) ///
-			text(`xannot', orientation(vertical) size(small) placement(north) ///
-			justification(center) alignment(top)) note("`st_pvalue'") ///
-			yline(1, lwidth(thin)) name(`ratio_plot', replace)
+		if ("`ryscale'" == "") {
+			twoway scatter `allnames' `xvalues', ylabel(`yrange') xlabel(`xlabs') ///
+				ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
+				connect(`allconnect') legend(`alllabels' order(`allorder')) ///
+				lpattern(`allpattern') lwidth(`allwidth') lcolor(`allcolor') ///
+				mcolor(`allcolor') mfcolor(`allcolor') mlcolor(`allcolor') ///
+				msymbol(`allmarker') scheme(sj) ///
+				text(`xannot', orientation(vertical) size(small) placement(north) ///
+				justification(center) alignment(top)) note("`st_pvalue'") ///
+				yline(1, lwidth(thin)) name(`ratio_plot', replace)
+		}
+		else {
+			twoway scatter `allnames' `xvalues', ylabel(`yrange') xlabel(`xlabs') ///
+				ytitle(`ytitle', margin(small)) xtitle(`xtitle', margin(medsmall)) ///
+				connect(`allconnect') legend(`alllabels' order(`allorder')) ///
+				lpattern(`allpattern') lwidth(`allwidth') lcolor(`allcolor') ///
+				mcolor(`allcolor') mfcolor(`allcolor') mlcolor(`allcolor') ///
+				msymbol(`allmarker') scheme(sj) ///
+				text(`xannot', orientation(vertical) size(small) placement(north) ///
+				justification(center) alignment(top)) note("`st_pvalue'") ///
+				yline(1, lwidth(thin)) name(`ratio_plot', replace) ///
+				ylabel("`yscrange'") yscale(range(`ymin' `ymax'))
+		}
 		
 		restore
 	}
