@@ -19,6 +19,9 @@ The `examples.do` file contains many examples taken from the literature as well 
 
 **Note:** if you installed the package prior to 9 May 2019, you need to manually remove the previous installation. You can do it by deleting all the files used by `stepp` from your Stata `PERSONAL` directory.
 
+# News
+- 01/08/2020: the package now allows to generate subpopulations using the event-based approach (see Lazar et al., 2016)
+
 # Authors
 Sergio Venturini, Department of Management, Università degli Studi di Torino, Turin, Italy
 
@@ -46,6 +49,17 @@ You can cite the `stepp` package as:
 Venturini, S., Bonetti, M., Gelber, R. D. (2020). stepp: A Stata Package for Subpopulation Treatment Effect Pattern Plots (STEPP) Analysis.
 
 GitHub repository: https://github.com/sergioventurini/stepp
+
+# References
+- Bonetti, M. and Gelber, R .D. 2004. Patterns of treatment effects in subsets of patients in clinical trials. Biostatistics, 5(3):465-481.
+
+- Bonetti, M., Zahrieh, D., Cole, B. F. and Gelber, R .D. 2009. A small sample study of the STEPP approach to assessing treatment-covariate interactions in survival data. Statistics in Medicine, 28(8):1255-68.
+
+- Lazar, A. A., Cole, B. F., Bonetti, M. and Gelber, R .D. 2010. Evaluation of treatment-effect heterogeneity using biomarkers measured on a continuous scale: subpopulation treatment effect pattern plot. Journal of Clinical Oncology, 28(29):4539-4544.
+
+- Lazar, A. A., Bonetti, M., Cole, B. F., Yip, W.-K. and Gelber, R .D. 2016. Identifying treatment effect heterogeneity in clinical trials using subpopulations of events: STEPP. Clinical Trials, 13(2):169–179.
+
+- Yip, W.-K., Bonetti, M., Cole, B. F., Barcella, W., Wang, X. V., Lazar, A. A. and Gelber, R .D. 2016. Subpopulation Treatment Effect Pattern Plot (STEPP) analysis for continuous, binary, and count outcomes. Clinical Trials, 13(4):382–390.
 
 # Copyright
 This software is distributed under the GPL-3 license (see LICENSE file).
