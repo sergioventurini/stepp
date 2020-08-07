@@ -20,7 +20,7 @@ The `examples.do` file contains many examples taken from the literature as well 
 **Note:** if you installed the package prior to 9 May 2019, you need to manually remove the previous installation. You can do it by deleting all the files used by `stepp` from your Stata `PERSONAL` directory.
 
 # News
-- 01/08/2020: the package now allows to generate subpopulations using the event-based approach (see Lazar et al., 2016)
+- 01/08/2020: the package now allows to generate subpopulations using the event-based approach described in Lazar et al. (2016)
 
 # Authors
 Sergio Venturini, Department of Management, Università degli Studi di Torino, Turin, Italy
