@@ -20,6 +20,7 @@ The `examples.do` file contains many examples taken from the literature as well 
 **Note:** if you installed the package prior to 9 May 2019, you need to manually remove the previous installation. You can do it by deleting all the files used by `stepp` from your Stata `PERSONAL` directory.
 
 # News
+- 05/10/2020: the package now includes a procedure (balance_patients) for determining the optimal number of subpopulations
 - 01/08/2020: the package now allows to generate subpopulations using the event-based approach described in Lazar et al. (2016)
 
 # Authors
