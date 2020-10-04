@@ -115,3 +115,10 @@ stepp time trt, covsubpop(ki67) failure(event) type(km) eventspop(20) ///
 	wintype("sliding_events") minsubpops(5) //notest
 
 steppplot, all conf(95) //nopop
+
+/* Example 10 (balanced subpopulations - patients) */
+/* ----------------------------------------------- */
+sysuse balance_example, clear
+
+balance_patients, range_r1(300 500) range_r2(950 1050) ///
+  maxnsubpops(50) covar(covar) plot

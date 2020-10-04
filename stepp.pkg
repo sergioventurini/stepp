@@ -1,5 +1,6 @@
 d 'STEPP': module for subpopulation treatment effect pattern plots (STEPP) analysis.
 d
+d KW: balanced subpopulations
 d KW: cumulative incidence
 d KW: survival analysis
 d KW: treatment effect
@@ -7,10 +8,10 @@ d KW: STEPP
 d
 d Requires: Stata version 15.1
 d
-d Distribution-Date: 20190509
+d Distribution-Date: 20201005
 d
-d Author: Sergio Venturini, Department of Decision Sciences, Università Bocconi, Milan, Italy
-d Support: email sergio.venturini@unibocconi.it
+d Author: Sergio Venturini, Department of Management, Università degli Studi di Torino, Turin, Italy
+d Support: email sergio.venturini@unito.it
 d
 d Author: Marco Bonetti, Department of Social and Political Sciences, Università Bocconi, Milan, Italy
 d Support: email marco.bonetti@unibocconi.it
@@ -19,8 +20,13 @@ d Author: Richard Gelber, Department of Biostatistics, Harvard T. H. Chan School
 d Support: email gelber@jimmy.harvard.edu
 d
 F aspirin.dta
+F balance_example.dta
+F balance_patients.sthlp
+F balance.ado
+F bcdm.dta
 F bigCI.dta
 F bigKM.dta
+F examples.do
 F lstepp.mlib
 F simdataCI.dta
 F simdataKM.dta

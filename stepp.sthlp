@@ -20,7 +20,7 @@
 
 {pstd}
 Subpopulation treatment effect pattern plot (STEPP) analysis of time to event
-data using Kaplan-Meier method
+data using Kaplan-Meier method.
 
 {p 8 14 8}
 {cmd:stepp} {it:{help varname:responsevar}} {it:{help varname:trtvar}}
@@ -32,7 +32,7 @@ data using Kaplan-Meier method
 
 {pstd}
 Subpopulation treatment effect pattern plot (STEPP) analysis of competing risks
-data using cumulative incidence method
+data using cumulative incidence method.
 
 {p 8 14 8}
 {cmd:stepp} {it:{help varname:responsevar}} {it:{help varname:trtvar}}
@@ -44,7 +44,7 @@ data using cumulative incidence method
 
 {pstd}
 Subpopulation treatment effect pattern plot (STEPP) analysis for continuous,
-binary and count outcomes
+binary and count outcomes.
 
 {p 8 14 8}
 {cmd:stepp} {it:{help varname:responsevar}} {it:{help varname:trtvar}}
@@ -420,7 +420,6 @@ each subpopulation{p_end}
 each subpopulation{p_end}
 {synopt:{cmd:e(maxc)}}vector of maximum value of the covariate of interest for
 each subpopulation{p_end}
-
 {synopt:{cmd:e(sObs_{it:j})}}vector of effect estimates of all subpopulations
 based on the {it:j}-th treatment{p_end}
 {synopt:{cmd:e(sSE_{it:j})}}vector of standard errors of effect estimates of all
