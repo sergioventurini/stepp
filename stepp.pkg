@@ -21,8 +21,8 @@ d Support: email gelber@jimmy.harvard.edu
 d
 F aspirin.dta
 F balance_example.dta
+F balance_patients.ado
 F balance_patients.sthlp
-F balance.ado
 F bcdm.dta
 F bigCI.dta
 F bigKM.dta
