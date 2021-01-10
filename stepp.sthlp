@@ -261,7 +261,7 @@ suppresses the subpopulations summary.
 suppresses the results summary.
  
 {phang}{opt nperm(#)}
-number of permutation replications to use in the test.
+number of permutation replications to use in the test. default to 25.
 
 {phang}{opt seed(#)}
 seed number to use for making the permutation test results reproducible.
