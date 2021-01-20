@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0  05Oct2020}{...}
+{* *! version 0.1.0  20Jan2021}{...}
 {vieweralsosee "stepp" "help stepp"}{...}
 {vieweralsosee "steppplot" "help steppplot"}{...}
 {viewerjumpto "Syntax" "stepp##syntax"}{...}
@@ -26,7 +26,7 @@ rather than events.
 {p 8 14 8}
 {cmd:balance_patients} {ifin}{cmd:,} {opth range_r1(numlist)}
 {opth range_r2(numlist)} {opth maxn:subpops(#)} {opth cov:ar(varname)}
-[{opt p:lot} {cmdab:noshowr:esults}]
+[{opt p:lot} {cmdab:noshowr:esults} {cmdab:st:oreresults}]
 
 {synoptset 25 tabbed}{...}
 {marker balance_patientsopts}{...}
@@ -42,6 +42,7 @@ consider{p_end}
 {synopt:{cmdab:p:lot}}produce a graphical representation of the results (not yet
 implemented){p_end}
 {synopt:{cmdab:noshowr:esults}}suppress the summary of the results{p_end}
+{synopt:{cmdab:st:oreresults}}store a big matrix with all results{p_end}
 {synoptline}
 
 {p 4 6 2}
@@ -86,6 +87,9 @@ produces a graphical representation of the results (not yet implemented).
  
 {phang}{opt noshowresults}
 suppresses the results summary.
+
+{phang}{opt storeresults}
+stores in memory a (big) matrix with all results (warning: it slows down significantly the process).
 
 
 {marker examples}{...}
@@ -148,7 +152,8 @@ analysis{p_end}
 {synoptset 24 tabbed}{...}
 {p2col 5 24 28 2: Matrices}{p_end}
 {synopt:{cmd:e(all_res)}}matrix containing the attained subpopulation sizes variance for
-each combination of r1, r2 and number of subpopulations{p_end}
+each combination of r1, r2 and number of subpopulations; available only if the
+{opt storeresults} option has been specified{p_end}
 
 {synoptset 24 tabbed}{...}
 {p2col 5 24 28 2: Functions}{p_end}

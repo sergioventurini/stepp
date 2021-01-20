@@ -1,5 +1,5 @@
-*!balance version 0.3.0
-*!Written 05Oct2020
+*!balance_patients version 0.3.0-1000
+*!Written 20Jan2021
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -9,7 +9,7 @@ program balance_patients, eclass byable(recall)
 		range_r1(numlist integer >1 min=2 max=2 sort) ///
 		range_r2(numlist integer >1 min=2 max=2 sort) ///
 		MAXNsubpops(numlist integer >1 min=1 max=1) COVar(varname numeric) ///
-		[ Plot noSHOWResults noCLeanup ]
+		[ Plot noSHOWResults SToreresults noCLeanup ]
 	
 	/* Options:
 	   --------
@@ -23,6 +23,7 @@ program balance_patients, eclass byable(recall)
                                   subpopulations
 		 plot								      --> produce a plot of the results
 		 noshowresults				    --> do not show the result summary
+		 storeresults				    	--> store a big matrix with all results
 		 nocleanup						    --> Mata temporary objects are not removed
 															    (undocumented)
 	 */
@@ -47,7 +48,7 @@ program balance_patients, eclass byable(recall)
 
 	/* Perform calculations */
 	tempname cvrt freqdist allfreqs k i res_calc
-	mata: `cvrt' = st_data(., "covar")
+	mata: `cvrt' = st_data(., "`covar'")
 	mata: `freqdist' = uniqrows(`cvrt', 1)
 	mata: `freqdist' = (`freqdist', runningsum(`freqdist'[., 2]))
 	mata: `k' = rows(`freqdist')
@@ -95,7 +96,9 @@ program balance_patients, eclass byable(recall)
 	mata: st_numscalar("e(r2_best)", `res_calc'.r2best)
 	mata: st_numscalar("e(var_best)", `res_calc'.varbest)
 	mata: st_numscalar("e(nsubpops_best)", `res_calc'.indbest)
-	mata: st_matrix("e(all_res)", `res_calc'.resmat)
+	if ("`storeresults'" != "") {
+		mata: st_matrix("e(all_res)", `res_calc'.resmat)
+	}
 	/* End of returning values */
 
 	/* Clean up */
