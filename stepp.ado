@@ -1,5 +1,5 @@
-*!stepp version 0.2.2
-*!Written 10Jan2021
+*!stepp version 0.2.2-1000
+*!Written 25Jan2021
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -111,7 +111,11 @@ program Estimate, eclass byable(recall)
   local varlist : list clean varlist
   
   /* Mark sample to use */
-  marksample __touse__
+	marksample __touse__
+	markout `__touse__' `covsubpop'
+	if ("`covariates'" != "") {
+	  markout `__touse__' `covariates'
+	}
   /* End of marking sample to use */
   
   /* Check model type */

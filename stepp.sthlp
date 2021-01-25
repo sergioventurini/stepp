@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0  22May2019}{...}
+{* *! version 0.1.0  25Jan2021}{...}
 {vieweralsosee "stepp postestimation" "help stepp postestimation"}{...}
 {vieweralsosee "steppplot" "help steppplot"}{...}
 {viewerjumpto "Syntax" "stepp##syntax"}{...}
@@ -23,7 +23,7 @@ Subpopulation treatment effect pattern plot (STEPP) analysis of time to event
 data using Kaplan-Meier method.
 
 {p 8 14 8}
-{cmd:stepp} {it:{help varname:responsevar}} {it:{help varname:trtvar}}
+{cmd:stepp} {it:{help varname:responsevar}} [{it:{help varname:trtvar}}]
 {ifin}{cmd:,} {cmdab:ty:pe(km)} {opth tr:ts(numlist)} {opth covs:ubpop(varname)}
 {opth fail:ure(varname)} {opt ti:mepoint(#)} [{opt pat:spop(#)}
 {opt minp:atspop(#)} {opt event:spop(#)} {opt minev:entspop(#)}
@@ -35,7 +35,7 @@ Subpopulation treatment effect pattern plot (STEPP) analysis of competing risks
 data using cumulative incidence method.
 
 {p 8 14 8}
-{cmd:stepp} {it:{help varname:responsevar}} {it:{help varname:trtvar}}
+{cmd:stepp} {it:{help varname:responsevar}} [{it:{help varname:trtvar}}]
 {ifin}{cmd:,} {cmdab:ty:pe(ci)} {opth tr:ts(numlist)} {opth covs:ubpop(varname)}
 {opth comp:risk(varname)} {opt ti:mepoint(#)} [{opt pat:spop(#)}
 {opt minp:atspop(#)} {opt event:spop(#)} {opt minev:entspop(#)}
@@ -47,7 +47,7 @@ Subpopulation treatment effect pattern plot (STEPP) analysis for continuous,
 binary and count outcomes.
 
 {p 8 14 8}
-{cmd:stepp} {it:{help varname:responsevar}} {it:{help varname:trtvar}}
+{cmd:stepp} {it:{help varname:responsevar}} [{it:{help varname:trtvar}}]
 {ifin}{cmd:,} {cmdab:ty:pe(glm)} {opt pat:spop(#)} {opth covs:ubpop(varname)}
 {cmdab:fa:mily(}{it:glmfamily}{cmd:)} {cmdab:l:ink(}{it:glmlink}{cmd:)}
 [{opt pat:spop(#)} {opt minp:atspop(#)} {opt event:spop(#)}
@@ -207,7 +207,7 @@ event-based windows). default to 5.
 
 {phang}{opth trts(numlist)}
 provides the list of treatments included in the treatment indicator {it:trtvar}.
-The order of the treatments in {opt trts} must be in the same order as in {it:trtvar}.
+Treatments must be reported in the same order as they appear in {it:trtvar}.
 
 {phang}{opth covsubpop(varname)}
 covariate variable to use for generating the subpopulations.
