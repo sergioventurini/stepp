@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0  25Jan2021}{...}
+{* *! version 0.1.0  29Jan2021}{...}
 {vieweralsosee "stepp postestimation" "help stepp postestimation"}{...}
 {vieweralsosee "steppplot" "help steppplot"}{...}
 {viewerjumpto "Syntax" "stepp##syntax"}{...}
@@ -25,8 +25,8 @@ data using Kaplan-Meier method.
 {p 8 14 8}
 {cmd:stepp} {it:{help varname:responsevar}} [{it:{help varname:trtvar}}]
 {ifin}{cmd:,} {cmdab:ty:pe(km)} {opth tr:ts(numlist)} {opth covs:ubpop(varname)}
-{opth fail:ure(varname)} {opt ti:mepoint(#)} [{opt pat:spop(#)}
-{opt minp:atspop(#)} {opt event:spop(#)} {opt minev:entspop(#)}
+{opth fail:ure(varname)} {opt ti:mepoint(#)} [{opth pat:spop(numlist)}
+{opth minp:atspop(numlist)} {opt event:spop(#)} {opt minev:entspop(#)}
 {opt mins:ubpops(#)} {it:{help stepp##steppopts:options}}]
 
 
@@ -37,8 +37,8 @@ data using cumulative incidence method.
 {p 8 14 8}
 {cmd:stepp} {it:{help varname:responsevar}} [{it:{help varname:trtvar}}]
 {ifin}{cmd:,} {cmdab:ty:pe(ci)} {opth tr:ts(numlist)} {opth covs:ubpop(varname)}
-{opth comp:risk(varname)} {opt ti:mepoint(#)} [{opt pat:spop(#)}
-{opt minp:atspop(#)} {opt event:spop(#)} {opt minev:entspop(#)}
+{opth comp:risk(varname)} {opt ti:mepoint(#)} [{opth pat:spop(numlist)}
+{opth minp:atspop(numlist)} {opt event:spop(#)} {opt minev:entspop(#)}
 {opt mins:ubpops(#)} {it:{help stepp##steppopts:options}}]
 
 
@@ -50,7 +50,7 @@ binary and count outcomes.
 {cmd:stepp} {it:{help varname:responsevar}} [{it:{help varname:trtvar}}]
 {ifin}{cmd:,} {cmdab:ty:pe(glm)} {opt pat:spop(#)} {opth covs:ubpop(varname)}
 {cmdab:fa:mily(}{it:glmfamily}{cmd:)} {cmdab:l:ink(}{it:glmlink}{cmd:)}
-[{opt pat:spop(#)} {opt minp:atspop(#)} {opt event:spop(#)}
+[{opth pat:spop(numlist)} {opth minp:atspop(numlist)} {opt event:spop(#)}
 {opt minev:entspop(#)} {opt mins:ubpops(#)}
 {it:{help stepp##steppopts:options}}]
 
@@ -61,9 +61,9 @@ binary and count outcomes.
 {synopt:{cmdab:ty:pe(km)}}use the Kaplan-Meier method{p_end}
 {synopt:{cmdab:ty:pe(ci)}}use the cumulative incidence method{p_end}
 {synopt:{cmdab:ty:pe(glm)}}use the generalized linear model method{p_end}
-{synopt:{opt pat:spop(#)}}number of patients in each subpopulation (called r2
+{synopt:{opth pat:spop(numlist)}}number of patients in each subpopulation (called r2
 in the literature){p_end}
-{synopt:{opt min:patspop(#)}}largest number of patients in common among
+{synopt:{opth min:patspop(numlist)}}largest number of patients in common among
 consecutive subpopulations (called r1 in the literature){p_end}
 {synopt:{opt event:spop(#)}}number of events in each subpopulation (called e2
 in the literature; only relevant for event-based windows){p_end}
@@ -168,6 +168,11 @@ determines how many events are included in each subpopulation, and the smaller
 parameter ({opt mineventspop}) determines the largest number of events in
 common among consecutive subpopulations.
 
+{pstd} Another alternative is the generation of the subpopulations using
+the so-called tail-oriented approach ({opt wintype(tail-oriented)}), whose
+aim is to assess the influence of the covariate extreme values on the treatment
+effect estimates.
+
 {pstd} For best results, consider implementing 2500 permutations of the
 covariate (vector of subpopulations) to obtain a detailed distribution to use
 for drawing inference.
@@ -185,13 +190,17 @@ and {help stepp##Yipetal2016:Yip et al. (2016)}.
 provides the model type to use. Alternative choices are {bf:km} (i.e. Kaplan-Meier),
 {bf:ci} (i.e. cumulative incidence) or {bf:glm} (i.e. generalized linear model).
 
-{phang}{opt patspop(#)}
+{phang}{opth patspop(numlist)}
 indicates the number of patients to include in each subpopulation (usually
-referred to as r2 in the literature).
+referred to as r2 in the literature); for tail-oriented windows it must be
+a sequence of numbers corresponding to the covariate minimum values in each
+subpopulation.
 
-{phang}{opt minpatspop(#)}
+{phang}{opth minpatspop(numlist)}
 indicates the number of patients to include in each subpopulation (usually
-referred to as r1 in the literature).
+referred to as r1 in the literature); for tail-oriented windows it must be
+a sequence of numbers corresponding to the covariate maximum values in each
+subpopulation.
 
 {phang}{opt eventspop(#)}
 indicates the number of events to include in each subpopulation (usually
@@ -353,9 +362,6 @@ Dana-Farber Cancer Institute, Boston, MA, USA{break}
 {synopt:{cmd:e(nperm)}}number of permutations performed{p_end}
 {synopt:{cmd:e(timepoint)}}timepoint at which to estimate survival; available
 when {opt type(km)} or {opt type(ci)} are chosen{p_end}
-{synopt:{cmd:e(r1)}}largest number of patients in common among consecutive
-subpopulations{p_end}
-{synopt:{cmd:e(r2)}}number of patients in each subpopulation{p_end}
 {synopt:{cmd:e(e1)}}largest number of events in common among consecutive
 subpopulations (only relevant for event-based windows){p_end}
 {synopt:{cmd:e(e2)}}number of events in each subpopulation (only relevant for
@@ -407,6 +413,11 @@ model; available when {opt type(glm)} is chosen{p_end}
 {synopt:{cmd:e(covsubpop)}}covariate used to generate the subpopulations{p_end}
 {synopt:{cmd:e(type)}}choice of model type (either {it:km}, {it:ci} or
 {it:glm}){p_end}
+{synopt:{cmd:e(r1)}}largest number of patients in common among consecutive
+subpopulations; for tail-oriented windows it corresponds to the covariate
+minimum values in each subpopulation{p_end}
+{synopt:{cmd:e(r2)}}number of patients in each subpopulation; for tail-oriented
+windows it corresponds to the covariate minimum values in each subpopulation{p_end}
 
 {synoptset 24 tabbed}{...}
 {p2col 5 24 28 2: Matrices}{p_end}

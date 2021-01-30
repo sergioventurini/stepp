@@ -2,13 +2,13 @@
 {* *! version 0.1.0  20Jan2021}{...}
 {vieweralsosee "stepp" "help stepp"}{...}
 {vieweralsosee "steppplot" "help steppplot"}{...}
-{viewerjumpto "Syntax" "stepp##syntax"}{...}
-{viewerjumpto "Description" "stepp##description"}{...}
-{viewerjumpto "Options" "stepp##options"}{...}
-{viewerjumpto "Examples" "stepp##examples"}{...}
-{viewerjumpto "Authors" "stepp##authors"}{...}
-{viewerjumpto "Stored results" "stepp##results"}{...}
-{viewerjumpto "References" "stepp##references"}{...}
+{viewerjumpto "Syntax" "balance_patients##syntax"}{...}
+{viewerjumpto "Description" "balance_patients##description"}{...}
+{viewerjumpto "Options" "balance_patients##options"}{...}
+{viewerjumpto "Examples" "balance_patients##examples"}{...}
+{viewerjumpto "Authors" "balance_patients##authors"}{...}
+{viewerjumpto "Stored results" "balance_patients##results"}{...}
+{viewerjumpto "References" "balance_patients##references"}{...}
 {title:Title}
 
 {p 4 18 2}
@@ -58,10 +58,10 @@ the subpopulation sizes is minimized. The command is intended to be used
 prior to a STEPP analysis and it focuses on the number of patients rather
 than the number of events.
 
-{pstd} For more details about the STEPP approach, see {help stepp##BonettiGelber2004:Bonetti & Gelber (2004)},
-{help stepp##Bonettietal2009:Bonetti et al. (2009)},
-{help stepp##Lazaretal2010:Lazar et al. (2010)}, {help stepp##Lazaretal2016:Lazar et al. (2016)} 
-and {help stepp##Yipetal2016:Yip et al. (2016)}.
+{pstd} For more details about the STEPP approach, see {help balance_patients##BonettiGelber2004:Bonetti & Gelber (2004)},
+{help balance_patients##Bonettietal2009:Bonetti et al. (2009)},
+{help balance_patients##Lazaretal2010:Lazar et al. (2010)}, {help balance_patients##Lazaretal2016:Lazar et al. (2016)} 
+and {help balance_patients##Yipetal2016:Yip et al. (2016)}.
 
 
 {marker options}{...}

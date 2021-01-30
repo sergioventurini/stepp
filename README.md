@@ -1,5 +1,5 @@
 # stepp
-###### Current release: 0.3.0
+###### Current release: 0.2.2-1000
 ###### Stata version required: at least 15.1
 Stata package for subpopulation treatment effect pattern plots (STEPP). The package is a porting to Stata of the [`stepp` R package](https://cran.r-project.org/web/packages/stepp/index.html).
 
