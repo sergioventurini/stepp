@@ -82,7 +82,7 @@ stepp time trt, covsubpop(covariate) failure(censor) type(km) patspop(300) ///
 
 /* Example 7 */
 /* --------- */
-use ./data/bcdm, clear
+use bcdm, clear
 
 encode arm, generate(arm_new)
 
@@ -216,7 +216,7 @@ stepp time, covsubpop(covariate) failure(censor) type(km) patspop(300) ///
 
 /* Example 17 (single group) */
 /* ------------------------- */
-use ./data/bcdm, clear
+use bcdm, clear
 
 count if (dfs == 0) & (trial == "IBCSG-9")
 
@@ -248,3 +248,5 @@ generate_tail, covariate(ki67) nsub(`nsub_tmp') dir("GE")
 stepp time trt, covsubpop(ki67) failure(event) type(km) ///
 	trts(1 2) timepoint(4.0) nperm(10) wintype("tail-oriented") ///
 	patspop("`r(patspop)'") minpatspop("`r(minpatspop)'")
+
+steppplot
