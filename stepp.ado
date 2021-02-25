@@ -1,5 +1,5 @@
 *!stepp version 0.2.2-2000
-*!Written 29Jan2021
+*!Written 25Feb2021
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -46,7 +46,7 @@ program Estimate, eclass byable(recall)
 	version 15.1
 	syntax varlist(min=1 max=2 numeric) [if] [in], ///
 		TYpe(string) COVSubpop(varname numeric) ///
-		[ TRts(numlist integer ascending min=2) WINType(string) WINBasedon(string) ///
+		[ TRts(numlist integer ascending min=2) WINType(string) ///
 		PATspop(numlist min=1) MINPatspop(numlist min=1) ///
 		EVENTspop(numlist integer >0 max=1) ///
     MINEVentspop(numlist integer >0 max=1) ///
@@ -67,7 +67,6 @@ program Estimate, eclass byable(recall)
 													--> treatments list
 		 wintype(string)			--> window type (either 'sliding', 'sliding_events' or
                               'tail-oriented')
-		 winbasedon(string)		--> what window is based on (either 'all' or 'event')
 		 patspop(numlist integer >0 max=1)
 													--> number of patients in each subpopulation (r2)
 		 minpatspop(numlist integer >0 max=1)
@@ -204,7 +203,6 @@ program Estimate, eclass byable(recall)
 
 	/* Parse window attributes */
 	if ("`wintype'" == "") local wintype = "sliding"
-	if ("`winbasedon'" == "") local winbasedon = "all"
 	if !("`wintype'" == "sliding" | "`wintype'" == "sliding_events" | ///
     "`wintype'" == "tail-oriented") {
 		display as error "window type can only be set to 'sliding', 'sliding_events' " _continue
@@ -225,10 +223,6 @@ program Estimate, eclass byable(recall)
 		if ("`minsubpops'" == "") {
 			local minsubpops 5
 		}
-	}
-	if !("`winbasedon'" == "all" | "`winbasedon'" == "event") {
-		display as error "window based-on attribute can only be set to 'all' or 'event'"
-		exit
 	}
 	if ("`type'" == "glm" & "`wintype'" == "sliding_events") {
 		display as error "the 'glm' model type is not allowed with " _continue
@@ -308,7 +302,7 @@ program Estimate, eclass byable(recall)
 	tempname stwin subp
 	if ("`wintype'" == "sliding_events") {
 		mata: `stwin' = stwin_wrap("`wintype'", ., ., ///
-			strtoreal("`mineventspop'"), strtoreal("`eventspop'"), "`winbasedon'")
+			strtoreal("`mineventspop'"), strtoreal("`eventspop'"))
 		if ("`failure'" == "") {
 			mata: `subp' = stsubpop_wrap(&`stwin', ///
 				st_data(., "`covsubpop'", "`__touse__'"), ///
@@ -327,13 +321,13 @@ program Estimate, eclass byable(recall)
 	else if ("`wintype'" == "tail-oriented") {
 		mata: `stwin' = stwin_wrap("`wintype'", ///
 			strtoreal(tokens("`minpatspop'"))', ///
-			strtoreal(tokens("`patspop'"))', ., ., "`winbasedon'")
+			strtoreal(tokens("`patspop'"))', ., .)
 		mata: `subp' = stsubpop_wrap(&`stwin', ///
 			st_data(., "`covsubpop'", "`__touse__'"))
 	}
 	else {
 		mata: `stwin' = stwin_wrap("`wintype'", strtoreal("`minpatspop'"), ///
-			strtoreal("`patspop'"), ., ., "`winbasedon'")
+			strtoreal("`patspop'"), ., .)
 		mata: `subp' = stsubpop_wrap(&`stwin', ///
 			st_data(., "`covsubpop'", "`__touse__'"))
 	}
@@ -448,7 +442,6 @@ program Estimate, eclass byable(recall)
 		ereturn local noconstant "`noconstant'"
 	}
 	mata: st_global("e(wintype)", __steppes__.subpop->win->type)
-	mata: st_global("e(winbasedon)", __steppes__.subpop->win->basedon)
 	ereturn local covsubpop "`covsubpop'"
 	ereturn local type "`type'"
 	

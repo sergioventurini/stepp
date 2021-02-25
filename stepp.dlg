@@ -3,7 +3,7 @@
   stepp.dlg
 
 *!version 0.2.0
-*!Written 25Jul2020
+*!Written 25Feb2021
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -69,11 +69,6 @@ BEGIN
 	COMBOBOX cb_wintype @ _ss 215 .,			///
 		dropdownlist                  		///					
 		contents(wintype_list) onselchange(program switch_toevents)
-  TEXT tx_winbasedon       	265        90				.        .,		///
-		label(Windows are based on:)
-	COMBOBOX cb_winbasedon @ _ss 210 .,			///
-		dropdownlist                  		///					
-		contents(winbasedon_list)
 	TEXT tx_r1       	_ilft        +30				towd        .,		///
 		label(r1:)
 	TEXT tx_e1       	@        @				@        @,		///
@@ -187,12 +182,6 @@ BEGIN
   sliding
   sliding_events
   tail-oriented
-END
-
-LIST winbasedon_list
-BEGIN
-  all
-  event
 END
 
 LIST type_list

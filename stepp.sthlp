@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0  29Jan2021}{...}
+{* *! version 0.1.0  25Feb2021}{...}
 {vieweralsosee "stepp postestimation" "help stepp postestimation"}{...}
 {vieweralsosee "steppplot" "help steppplot"}{...}
 {viewerjumpto "Syntax" "stepp##syntax"}{...}
@@ -226,11 +226,6 @@ sets the type of the windows to use for generating the subpopulations.
 Alternative choices are {bf:sliding} (default), {bf:sliding_events} or {bf:tail-oriented}. See the
 references for further details.
 
-{phang}{opt winbasedon(windows_basedon)}
-provides the choice of which observations to use for generating the subpopulations.
-Alternative choices are {bf:all} (default) or {bf:event}. See the references
-for further details.
-
 {phang}{opth failure(varname)}
 provides the failure event indicator to use in the analysis when {opt type(km)}
 is chosen.
@@ -409,7 +404,6 @@ chosen{p_end}
 {synopt:{cmd:e(noconstant)}}constant suppressed in the estimation of the GLM
 model; available when {opt type(glm)} is chosen{p_end}
 {synopt:{cmd:e(wintype)}}type of window used to generate the subpopulations{p_end}
-{synopt:{cmd:e(winbasedon)}}what has been used in generating the subpopulations{p_end}
 {synopt:{cmd:e(covsubpop)}}covariate used to generate the subpopulations{p_end}
 {synopt:{cmd:e(type)}}choice of model type (either {it:km}, {it:ci} or
 {it:glm}){p_end}
