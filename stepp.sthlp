@@ -80,10 +80,6 @@ subpopulations; the default{p_end}
 method for generating the subpopulations{p_end}
 {synopt:{cmdab:wint:ype(tail-oriented)}}use the tail-oriented window method for
 generating the subpopulations{p_end}
-{synopt:{cmdab:winb:asedon(all)}}use all observations for generating the
-subpopulations; the default{p_end}
-{synopt:{cmdab:winb:asedon(event)}}use only observations related to a specific
-event for generating the subpopulations{p_end}
 {synopt:{opth fail:ure(varname)}}failure event; to use with {cmdab:type(km)}{p_end}
 {synopt:{opth comp:risk(varname)}}variable with distinct codes for different
 causes of failure, which must be set to 0 for censored observations, to 1 for
