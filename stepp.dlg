@@ -45,8 +45,7 @@ DEFINE fromsep +125
 DEFINE towd 30
 DEFINE tosep +35
 
-DIALOG main, label("stepp - Subpopulation Treatment Effect Pattern Plot (STEPP) analysis")	///
-	tabtitle(resource LBL_TAB_MODEL)
+DIALOG main, title("stepp - Subpopulation Treatment Effect Pattern Plot (STEPP) analysis")
 BEGIN
   TEXT tx_dv 		_lft	_top	_vnwd	.,			///
 		label(Response variable:)

@@ -3,7 +3,7 @@
   steppplot.dlg
 
 *!version 0.2.0
-*!Written 25Jul2020
+*!Written 25Feb2021
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -39,7 +39,7 @@ BEGIN
 	setscale_hadj resource REGRESS_DLG_HSCALE
 END
 
-DIALOG main
+DIALOG main, title("steppplot - Subpopulation Treatment Effect Pattern Plot (STEPP)")
 BEGIN
   DEFINE _x _lft
   DEFINE _cx _spr2b
