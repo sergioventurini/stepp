@@ -1,5 +1,5 @@
 *!steppplot version 0.4.1
-*!Written 10Jan2021
+*!Written 25Feb2021
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -371,7 +371,7 @@ program _steppplot
           local j1 = 1 + 3*(`jm1' - 1)
           local j2 = 2 + 3*(`jm1' - 1)
           local j3 = 3 + 3*(`jm1' - 1)
-          local alllabels `"`alllabels' label(`j1' `trtjlab' vs. `trt1lab') label(`j2' `dq'`dq') label(`j3' `dq'`dq')"'
+          local alllabels `"`alllabels' label(`j1' `trt1lab' vs. `trtjlab') label(`j2' `dq'`dq') label(`j3' `dq'`dq')"'
           local allorder "`allorder' `j1'"
         }
         if ((!`isnotest') & (`j' > 1)) {
@@ -540,7 +540,7 @@ program _steppplot
         local j1 = 1 + 3*(`j' - 1)
         local j2 = 2 + 3*(`j' - 1)
         local j3 = 3 + 3*(`j' - 1)
-        local alllabels `"`alllabels' label(`j1' `trtjlab' vs. `trt1lab') label(`j2' `dq'`dq') label(`j3' `dq'`dq')"'
+        local alllabels `"`alllabels' label(`j1' `trt1lab' vs. `trtjlab') label(`j2' `dq'`dq') label(`j3' `dq'`dq')"'
         local allorder "`allorder' `j1'"
         if (!`isnotest') {
           local pvalue = e(pvalue_`j')

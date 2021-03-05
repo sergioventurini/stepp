@@ -283,7 +283,7 @@ of times equal to zero. default to 0.00001.
 {phang2}{cmd:. stepp time trt, covsubpop(ki67) failure(event) type(km) patspop(150) minpatspop(50) trts(1 2) timepoint(4.0) nperm(250)}{p_end}
 
 {pstd}Graphical analysis{p_end}
-{phang2}{cmd:. steppplot, all conf(95) trtlabs(1 Taxmoxifen 2 Letrozole) xtitle("Median Ki-67 LI in subpopulation (% immunoreactivity)") ytitle("4-year disease free survival") nopop}{p_end}
+{phang2}{cmd:. steppplot, all conf(95) trtlabs(1 Letrozole 2 Tamoxifen) xtitle("Median Ki-67 LI in subpopulation (% immunoreactivity)") ytitle("4-year disease free survival") nopop}{p_end}
     {hline}
 {pstd}{it:Cumulative incidence method}{p_end}
 {pstd}Setup{p_end}
@@ -293,7 +293,7 @@ of times equal to zero. default to 0.00001.
 {phang2}{cmd:. stepp time trt, covsubpop(ki67) comprisk(event) type(ci) patspop(150) minpatspop(50) trts(1 2) timepoint(4.0) nperm(250)}{p_end}
 
 {pstd}Graphical analysis{p_end}
-{phang2}{cmd:. steppplot, all conf(95) trtlabs(1 Taxmoxifen 2 Letrozole) xtitle("Median Ki-67 LI in subpopulation (% immunoreactivity)") ytitle("4-year disease free survival") nopop}{p_end}
+{phang2}{cmd:. steppplot, all conf(95) trtlabs(1 Letrozole 2 Tamoxifen) xtitle("Median Ki-67 LI in subpopulation (% immunoreactivity)") ytitle("4-year disease free survival") nopop}{p_end}
     {hline}
 {pstd}{it:Generalized linear model method (binary outcome)}{p_end}
 {pstd}Setup{p_end}
