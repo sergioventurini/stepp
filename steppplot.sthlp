@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0-1000  10Jan2021}{...}
+{* *! version 0.1.0-2000  18Apr2021}{...}
 {vieweralsosee "stepp" "help stepp"}{...}
 {vieweralsosee "stepp postestimation" "help stepp postestimation"}{...}
 {viewerjumpto "Syntax" "steppplot##syntax"}{...}
@@ -24,7 +24,7 @@
 {synopthdr}
 {synoptline}
 {synopt:{cmdab:s:ubpop}}plot the generated subpopulations{p_end}
-{synopt:{cmdab:t:reteff}}plot the estimated treatment effects{p_end}
+{synopt:{cmdab:t:rteff}}plot the estimated treatment effects{p_end}
 {synopt:{cmdab:d:iff}}plot the difference between the treatment effects estimates{p_end}
 {synopt:{cmdab:r:atio}}plot the ratio estimates between any treatment and treatment 1{p_end}
 {synopt:{cmdab:a:ll}}produce all the available graphs{p_end}
