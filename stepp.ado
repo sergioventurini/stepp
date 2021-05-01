@@ -1,5 +1,5 @@
 *!stepp version 0.2.2-2000
-*!Written 25Feb2021
+*!Written 01May2021
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -224,9 +224,9 @@ program Estimate, eclass byable(recall)
 			local minsubpops 5
 		}
 	}
-	if ("`type'" == "glm" & "`wintype'" == "sliding_events") {
-		display as error "the 'glm' model type is not allowed with " _continue
-		display as error "event-based generated subpopulations"
+	if ("`type'" != "ci" & "`wintype'" == "sliding_events") {
+		display as error "currently event-based sliding windows are available only " _continue
+		display as error "for competing risks analyses (i.e., when using 'type(ci)')"
 		exit
 	}
 	/* End parsing window attributes */

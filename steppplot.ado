@@ -1,5 +1,5 @@
 *!steppplot version 0.4.1-2000
-*!Written 18Apr2021
+*!Written 01May2021
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -237,7 +237,7 @@ program _steppplot
       local xannot `"`xannot' `ymin' `xlabi' `"`npatsubi'"'"'
     }
     
-    * tempname trteff_plot
+    * tempname est_plot
     if (`"`ytitle'"' == "") {
       local ytitle "Estimates"
     }
@@ -253,7 +253,7 @@ program _steppplot
         mlcolor(`lcol') scheme(sj) ///
         text(`xannot', orientation(vertical) size(small) placement(north) ///
         justification(center) alignment(top)) note("`st_pvalue'") ///
-        name("trteff_plot", replace)
+        name("est_plot", replace)
     }
     else {
       twoway scatter `allnames' `xvalues', ylabel(0(20)100) xlabel(`xlabs') ///
@@ -263,7 +263,7 @@ program _steppplot
         mlcolor(`lcol') scheme(sj) ///
         text(`xannot', orientation(vertical) size(small) placement(north) ///
         justification(center) alignment(top)) note("`st_pvalue'") ///
-        name("trteff_plot", replace) ///
+        name("est_plot", replace) ///
         ylabel("`yscrange'") yscale(range(`ymin' `ymax'))
     }
   
