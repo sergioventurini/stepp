@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0-2000  18Apr2021}{...}
+{* *! version 0.1.0-2000  12Nov2023}{...}
 {vieweralsosee "stepp" "help stepp"}{...}
 {vieweralsosee "stepp postestimation" "help stepp postestimation"}{...}
 {viewerjumpto "Syntax" "steppplot##syntax"}{...}
@@ -117,9 +117,9 @@ a STEPP analysis.
 {title:Authors}
 
 {pstd} Sergio Venturini{break}
-Department of Management{break}
-Università degli Studi di Torino, Turin, Italy{break}
-{browse "mailto:sergio.venturini@unito.it":sergio.venturini@unito.it}{break}
+Department of Economic and Social Sciences{break}
+Università Cattolica del Sacro Cuore, Cremona, Italy{break}
+{browse "mailto:sergio.venturini@unicatt.it":sergio.venturini@unicatt.it}{break}
 
 {pstd} Marco Bonetti{break}
 Carlo F. Dondena Centre for Research on Social Dynamics and Public Policy{break}
@@ -153,6 +153,10 @@ Lazar, A. A., Cole, B. F., Bonetti, M., and Gelber, R .D. 2010. Evaluation of
 treatment-effect heterogeneity using biomarkers measured on a continuous scale:
 subpopulation treatment effect pattern plot. Journal of Clinical Oncology,
 28(29):4539-4544.
+
+{marker Venturinietal2023}{...}
+{phang}
+Venturini, S., Bonetti, M., Lazar, A. A., Cole, B. F., Wang, X.-V., Gelber, R. D., Yip, W.-K. 2023. Subpopulation treatment effect pattern plot (STEPP) methods with R and Stata. Journal of Data Science, 21(1):106-126.
 
 {marker Yipetal2016}{...}
 {phang}
