@@ -1,5 +1,5 @@
 *!stepp version 0.2.2-2000
-*!Written 01May2021
+*!Written 26Nov2023
 *!Written by Sergio Venturini, Marco Bonetti and Richard D. Gelber
 *!The following code is distributed under GNU General Public License version 3 (GPL-3)
 
@@ -224,11 +224,11 @@ program Estimate, eclass byable(recall)
 			local minsubpops 5
 		}
 	}
-	if ("`type'" != "ci" & "`wintype'" == "sliding_events") {
-		display as error "currently event-based sliding windows are available only " _continue
-		display as error "for competing risks analyses (i.e., when using 'type(ci)')"
-		exit
-	}
+  if ("`type'" != "ci" & "`wintype'" == "sliding_events") {
+    display as error "currently event-based sliding windows are available only " _continue
+    display as error "for competing risks analyses (i.e., when using 'type(ci)')"
+    exit
+  }
 	/* End parsing window attributes */
 
 	/* Parse minpatspop (r1) and patspop (r2) numlists */
@@ -439,7 +439,7 @@ program Estimate, eclass byable(recall)
 		ereturn local family "`family'"
 		ereturn local link "`link'"
 		ereturn local covariates "`covariates'"
-		ereturn local noconstant "`noconstant'"
+		ereturn local noconstant "`constant'"
 	}
 	mata: st_global("e(wintype)", __steppes__.subpop->win->type)
 	ereturn local covsubpop "`covsubpop'"

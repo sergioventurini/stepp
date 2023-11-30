@@ -1,5 +1,5 @@
 # stepp
-###### Current release: 0.2.2-1000
+###### Current release: 0.2.3
 ###### Stata version required: at least 17.0
 Stata package for subpopulation treatment effect pattern plots (STEPP). The package is a porting to Stata of the [`stepp` R package](https://cran.r-project.org/web/packages/stepp/index.html).
 
@@ -20,6 +20,7 @@ The `examples.do` file contains many examples taken from the literature as well 
 **Note:** if you installed the package prior to 9 May 2019, you need to manually remove the previous installation. You can do it by deleting all the files used by `stepp` from your Stata `PERSONAL` directory.
 
 # News
+- 30/11/2023: the calculations of the GLM case have been updated
 - 10/01/2021: the package now includes the possibility to run single group analyses
 - 05/10/2020: the package now includes a procedure called `balance_patients` for determining the optimal number of subpopulations
 - 01/08/2020: the package now allows to generate subpopulations using the event-based approach described in Lazar et al. (2016)
